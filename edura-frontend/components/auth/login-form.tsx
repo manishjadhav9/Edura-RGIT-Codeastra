@@ -22,7 +22,7 @@ const formSchema = z.object({
 export default function LoginForm() {
   const router = useRouter()
   const { login } = useAuth()
-  const [userType, setUserType] = useState<"student" | "teacher">("student")
+  const [userType, setUserType] = useState<"student" | "mentor">("student")
   const [error, setError] = useState<string | null>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,11 +45,12 @@ export default function LoginForm() {
         if (userDataString) {
           const userData = JSON.parse(userDataString)
           
+          // Check if user is a mentor (role admin or qualification mentor)
+          const isMentor = userData.role === "admin" || userData.qualification === "mentor"
+          
           // Redirect based on role
-          if (userData.role === "student") {
-            router.push("/dashboard")
-          } else if (userData.role === "teacher") {
-            router.push("/teacher/dashboard")
+          if (isMentor) {
+            router.push("/mentor/dashboard")
           } else {
             router.push("/dashboard")
           }
@@ -78,11 +79,11 @@ export default function LoginForm() {
         <Tabs
           defaultValue="student"
           className="w-full"
-          onValueChange={(value) => setUserType(value as "student" | "teacher")}
+          onValueChange={(value) => setUserType(value as "student" | "mentor")}
         >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="student">Student</TabsTrigger>
-            <TabsTrigger value="teacher">Teacher</TabsTrigger>
+            <TabsTrigger value="mentor">Mentor</TabsTrigger>
           </TabsList>
         </Tabs>
 

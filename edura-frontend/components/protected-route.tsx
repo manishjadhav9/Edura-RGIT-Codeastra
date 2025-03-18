@@ -15,7 +15,7 @@ export default function ProtectedRoute({
   requiresAuth = true,
   allowedRoles = [] 
 }: ProtectedRouteProps) {
-  const { isAuthenticated, user, isLoading } = useAuth()
+  const { isAuthenticated, user, isLoading, isMentor } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
@@ -31,19 +31,19 @@ export default function ProtectedRoute({
         isAuthenticated &&
         allowedRoles.length > 0 &&
         user &&
-        !allowedRoles.includes(user.role)
+        !allowedRoles.includes(user.role) &&
+        // Also check for mentor
+        !(allowedRoles.includes("admin") && isMentor)
       ) {
         // Redirect based on role
-        if (user.role === "student") {
-          router.push("/dashboard")
-        } else if (user.role === "teacher") {
-          router.push("/teacher/dashboard")
+        if (isMentor) {
+          router.push("/mentor/dashboard")
         } else {
           router.push("/dashboard")
         }
       }
     }
-  }, [isAuthenticated, isLoading, requiresAuth, allowedRoles, user, router])
+  }, [isAuthenticated, isLoading, requiresAuth, allowedRoles, user, router, isMentor])
 
   // Show nothing while checking authentication
   if (isLoading) {
@@ -61,7 +61,9 @@ export default function ProtectedRoute({
     isAuthenticated &&
     allowedRoles.length > 0 &&
     user &&
-    !allowedRoles.includes(user.role)
+    !allowedRoles.includes(user.role) &&
+    // Also check for mentor
+    !(allowedRoles.includes("admin") && isMentor)
   ) {
     return null
   }

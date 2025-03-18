@@ -1,12 +1,21 @@
-import TeacherContestsPage from "@/components/teacher/teacher-contests"
+"use client"
+
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Teacher Contests | Edura Learning Platform",
-  description: "Create and manage coding challenges and competitions",
+  title: "Redirecting to Mentor Contests | Edura Learning Platform",
+  description: "Redirecting to Mentor Contests page.",
 }
 
-export default function TeacherContests() {
-  return <TeacherContestsPage />
+export default function TeacherContestsRedirect() {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.push("/mentor/contests")
+  }, [router])
+
+  return null
 }
 

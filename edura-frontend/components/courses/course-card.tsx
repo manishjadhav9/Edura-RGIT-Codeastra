@@ -16,7 +16,7 @@ export default function CourseCard({ title, instructor, progress, image, lessons
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
       <div className="relative h-48 w-full">
-        <Image src={image || "/placeholder.svg"} alt={title} fill className="object-cover" />
+        <Image src={image || "/placeholder-course-1.png"} alt={title} fill className="object-cover" />
         {progress > 0 && progress < 100 && (
           <div className="absolute top-2 right-2 bg-orange-500 text-white text-xs font-medium px-2 py-1 rounded-full">
             In Progress

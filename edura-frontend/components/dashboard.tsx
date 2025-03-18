@@ -87,7 +87,7 @@ export default function Dashboard() {
                 title="UI/UX Design Fundamentals"
                 instructor="Sarah Johnson"
                 progress={75}
-                image="https://source.unsplash.com/random/800x600/?design"
+                image="/placeholder-course-1.png"
                 lessons={12}
                 duration="6 weeks"
               />
@@ -95,7 +95,7 @@ export default function Dashboard() {
                 title="Frontend Web Development"
                 instructor="Michael Chen"
                 progress={50}
-                image="https://source.unsplash.com/random/800x600/?coding"
+                image="/placeholder-course-2.png"
                 lessons={24}
                 duration="8 weeks"
               />
@@ -103,7 +103,7 @@ export default function Dashboard() {
                 title="Mobile App Development"
                 instructor="Jessica Lee"
                 progress={30}
-                image="https://source.unsplash.com/random/800x600/?mobile"
+                image="/placeholder-course-3.png"
                 lessons={18}
                 duration="10 weeks"
               />
@@ -111,7 +111,7 @@ export default function Dashboard() {
                 title="Data Visualization"
                 instructor="Robert Smith"
                 progress={0}
-                image="https://source.unsplash.com/random/800x600/?data"
+                image="/placeholder-course-4.png"
                 lessons={15}
                 duration="5 weeks"
               />

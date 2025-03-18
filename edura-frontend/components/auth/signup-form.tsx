@@ -30,7 +30,7 @@ const studentFormSchema = z
     path: ["confirmPassword"],
   })
 
-const teacherFormSchema = z
+const mentorFormSchema = z
   .object({
     name: z.string().min(2, { message: "Name must be at least 2 characters" }),
     email: z.string().email({ message: "Please enter a valid email address" }),
@@ -39,7 +39,7 @@ const teacherFormSchema = z
     specialization: z.string().min(1, { message: "Please enter your specialization" }),
     experience: z.string().min(1, { message: "Please select your experience level" }),
     institute_company: z.string().min(1, { message: "Please enter your institution" }),
-    qualification: z.literal("teacher"),
+    qualification: z.literal("mentor"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -54,7 +54,7 @@ const educationLevelOptions = [
   { value: "graduate", label: "Graduate" },
   { value: "post_graduate", label: "Post Graduate" },
   { value: "working_professional", label: "Working Professional" },
-  { value: "teacher", label: "Teacher" },
+  { value: "mentor", label: "Mentor" },
 ]
 
 const experienceLevelOptions = [
@@ -72,7 +72,7 @@ interface Interest {
 
 export default function SignupForm() {
   const router = useRouter()
-  const [userType, setUserType] = useState<"student" | "teacher">("student")
+  const [userType, setUserType] = useState<"student" | "mentor">("student")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [interests, setInterests] = useState<Interest[]>([])
@@ -108,8 +108,8 @@ export default function SignupForm() {
     },
   })
 
-  const teacherForm = useForm<z.infer<typeof teacherFormSchema>>({
-    resolver: zodResolver(teacherFormSchema),
+  const mentorForm = useForm<z.infer<typeof mentorFormSchema>>({
+    resolver: zodResolver(mentorFormSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -118,7 +118,7 @@ export default function SignupForm() {
       specialization: "",
       experience: "",
       institute_company: "",
-      qualification: "teacher",
+      qualification: "mentor",
     },
   })
 
@@ -163,7 +163,7 @@ export default function SignupForm() {
     }
   }
 
-  async function onTeacherSubmit(values: z.infer<typeof teacherFormSchema>) {
+  async function onMentorSubmit(values: z.infer<typeof mentorFormSchema>) {
     setIsLoading(true)
     setError(null)
     
@@ -177,10 +177,10 @@ export default function SignupForm() {
           username: values.name,
           email: values.email,
           password: values.password,
-          role: "student", // Using student role for teacher as per backend schema
-          qualification: "teacher",
+          role: "admin", // Use admin role for mentors
+          qualification: "mentor",
           institute_company: values.institute_company,
-          interests: [], // Teachers don't have interests in this schema
+          interests: [], // Mentors don't have interests in this schema
         }),
       })
 
@@ -217,11 +217,11 @@ export default function SignupForm() {
         <Tabs
           defaultValue="student"
           className="w-full"
-          onValueChange={(value) => setUserType(value as "student" | "teacher")}
+          onValueChange={(value) => setUserType(value as "student" | "mentor")}
         >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="student">Student</TabsTrigger>
-            <TabsTrigger value="teacher">Teacher</TabsTrigger>
+            <TabsTrigger value="mentor">Mentor</TabsTrigger>
           </TabsList>
 
           {error && (
@@ -298,7 +298,7 @@ export default function SignupForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {educationLevelOptions.filter(option => option.value !== "teacher").map((option) => (
+                          {educationLevelOptions.filter(option => option.value !== "mentor").map((option) => (
                             <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
@@ -371,11 +371,11 @@ export default function SignupForm() {
             </Form>
           </TabsContent>
 
-          <TabsContent value="teacher">
-            <Form {...teacherForm}>
-              <form onSubmit={teacherForm.handleSubmit(onTeacherSubmit)} className="space-y-4">
+          <TabsContent value="mentor">
+            <Form {...mentorForm}>
+              <form onSubmit={mentorForm.handleSubmit(onMentorSubmit)} className="space-y-4">
                 <FormField
-                  control={teacherForm.control}
+                  control={mentorForm.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
@@ -388,7 +388,7 @@ export default function SignupForm() {
                   )}
                 />
                 <FormField
-                  control={teacherForm.control}
+                  control={mentorForm.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
@@ -401,7 +401,7 @@ export default function SignupForm() {
                   )}
                 />
                 <FormField
-                  control={teacherForm.control}
+                  control={mentorForm.control}
                   name="password"
                   render={({ field }) => (
                     <FormItem>
@@ -414,7 +414,7 @@ export default function SignupForm() {
                   )}
                 />
                 <FormField
-                  control={teacherForm.control}
+                  control={mentorForm.control}
                   name="confirmPassword"
                   render={({ field }) => (
                     <FormItem>
@@ -427,7 +427,7 @@ export default function SignupForm() {
                   )}
                 />
                 <FormField
-                  control={teacherForm.control}
+                  control={mentorForm.control}
                   name="specialization"
                   render={({ field }) => (
                     <FormItem>
@@ -440,7 +440,7 @@ export default function SignupForm() {
                   )}
                 />
                 <FormField
-                  control={teacherForm.control}
+                  control={mentorForm.control}
                   name="experience"
                   render={({ field }) => (
                     <FormItem>
@@ -464,7 +464,7 @@ export default function SignupForm() {
                   )}
                 />
                 <FormField
-                  control={teacherForm.control}
+                  control={mentorForm.control}
                   name="institute_company"
                   render={({ field }) => (
                     <FormItem>
@@ -481,7 +481,7 @@ export default function SignupForm() {
                   className="w-full bg-orange-500 hover:bg-orange-600"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Creating Account..." : "Create Teacher Account"}
+                  {isLoading ? "Creating Account..." : "Create Mentor Account"}
                 </Button>
               </form>
             </Form>

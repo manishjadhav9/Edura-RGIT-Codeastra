@@ -28,6 +28,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>
   logout: () => void
   fetchUserProfile: () => Promise<void>
+  isMentor: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -37,6 +38,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
+
+  // Determine if user is a mentor (role can be admin or qualification mentor)
+  const isMentor = user?.role === "admin" || user?.qualification === "mentor"
 
   useEffect(() => {
     // Check for token in localStorage
@@ -120,6 +124,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     login,
     logout,
     fetchUserProfile,
+    isMentor
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

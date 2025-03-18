@@ -23,7 +23,7 @@ export default function Header() {
   }
 
   const navigateToProfile = () => {
-    router.push(user?.role === "teacher" ? "/teacher/profile" : "/profile")
+    router.push(user?.role === "mentor" ? "/mentor/profile" : "/profile")
   }
 
   // Get initials from username for avatar fallback
@@ -45,7 +45,7 @@ export default function Header() {
           onClick={navigateToProfile}
         >
           <Avatar className="h-10 w-10">
-            <AvatarImage src="https://source.unsplash.com/random/100x100/?portrait" alt={user?.username || "User"} />
+            <AvatarImage src="/placeholder-avatar.png" alt={user?.username || "User"} />
             <AvatarFallback className="bg-orange-500 text-white">{user?.username ? getInitials(user.username) : "U"}</AvatarFallback>
           </Avatar>
         </Button>
@@ -67,7 +67,7 @@ export default function Header() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={navigateToProfile}>Profile</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push(user?.role === "teacher" ? "/teacher/settings" : "/settings")}>Account Settings</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push(user?.role === "mentor" ? "/mentor/settings" : "/settings")}>Account Settings</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>

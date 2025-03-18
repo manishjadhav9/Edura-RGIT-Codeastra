@@ -1,12 +1,21 @@
-import TeacherDashboard from "@/components/teacher/teacher-dashboard"
+"use client"
+
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Teacher Dashboard | Edura Learning Platform",
-  description: "Manage your courses and students",
+  title: "Redirecting to Mentor Dashboard | Edura Learning Platform",
+  description: "Redirecting to Mentor Dashboard page.",
 }
 
-export default function TeacherDashboardPage() {
-  return <TeacherDashboard />
+export default function TeacherDashboardRedirect() {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.push("/mentor/dashboard")
+  }, [router])
+
+  return null
 }
 

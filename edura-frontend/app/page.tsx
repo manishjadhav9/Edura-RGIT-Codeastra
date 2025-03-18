@@ -11,14 +11,14 @@ import Image from "next/image";
 
 export default function Home() {
   const router = useRouter()
-  const { isAuthenticated, user, isLoading } = useAuth()
+  const { isAuthenticated, isMentor, isLoading } = useAuth()
   
   useEffect(() => {
     if (!isLoading) {
       if (isAuthenticated) {
         // Redirect based on role
-        if (user?.role === "teacher") {
-          router.push("/teacher/dashboard")
+        if (isMentor) {
+          router.push("/mentor/dashboard")
         } else {
           router.push("/dashboard")
         }
@@ -27,7 +27,7 @@ export default function Home() {
         router.push("/onboarding")
       }
     }
-  }, [isAuthenticated, isLoading, router, user])
+  }, [isAuthenticated, isLoading, router, isMentor])
 
   // Show loading while checking auth status
   return (

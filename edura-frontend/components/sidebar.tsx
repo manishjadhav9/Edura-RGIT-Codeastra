@@ -27,8 +27,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
   const pathname = usePathname()
-  const { user } = useAuth()
-  const userType = user?.role === "teacher" ? "teacher" : "student"
+  const { user, isMentor } = useAuth()
 
   const studentMenuItems = [
     { id: "dashboard", label: "Dashboard", icon: Home, path: "/dashboard" },
@@ -40,26 +39,26 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     { id: "analytics", label: "Analytics", icon: BarChart, path: "/analytics" },
   ]
 
-  const teacherMenuItems = [
-    { id: "dashboard", label: "Dashboard", icon: Home, path: "/teacher/dashboard" },
-    { id: "courses", label: "My Courses", icon: BookOpen, path: "/teacher/courses" },
-    { id: "students", label: "Students", icon: Users, path: "/teacher/students" },
-    { id: "discussions", label: "Discussions", icon: MessageSquare, path: "/teacher/discussions" },
-    { id: "assignments", label: "Assignments", icon: FileText, path: "/teacher/assignments" },
-    { id: "contests", label: "Contests", icon: Trophy, path: "/teacher/contests" },
-    { id: "grades", label: "Grades", icon: GraduationCap, path: "/teacher/grades" },
+  const mentorMenuItems = [
+    { id: "dashboard", label: "Dashboard", icon: Home, path: "/mentor/dashboard" },
+    { id: "courses", label: "My Courses", icon: BookOpen, path: "/mentor/courses" },
+    { id: "students", label: "Students", icon: Users, path: "/mentor/students" },
+    { id: "discussions", label: "Discussions", icon: MessageSquare, path: "/mentor/discussions" },
+    // { id: "assignments", label: "Assignments", icon: FileText, path: "/mentor/assignments" },
+    { id: "contests", label: "Contests", icon: Trophy, path: "/mentor/contests" },
+    // { id: "grades", label: "Grades", icon: GraduationCap, path: "/mentor/grades" },
   ]
 
-  const menuItems = userType === "teacher" ? teacherMenuItems : studentMenuItems
+  const menuItems = isMentor ? mentorMenuItems : studentMenuItems
 
   const bottomMenuItems = [
     {
       id: "settings",
       label: "Settings",
       icon: Settings,
-      path: userType === "teacher" ? "/teacher/settings" : "/settings",
+      path: isMentor ? "/mentor/settings" : "/settings",
     },
-    { id: "help", label: "Help Center", icon: HelpCircle, path: userType === "teacher" ? "/teacher/help" : "/help" },
+    { id: "help", label: "Help Center", icon: HelpCircle, path: isMentor ? "/mentor/help" : "/help" },
   ]
 
   return (

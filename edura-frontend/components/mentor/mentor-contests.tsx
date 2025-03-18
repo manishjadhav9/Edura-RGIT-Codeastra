@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Search, Plus, Code, FileCode2, BrainCircuit, Eye } from "lucide-react"
 
-export default function TeacherContestsPage() {
+export default function MentorContestsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
   const toggleSidebar = () => {
@@ -164,7 +164,7 @@ export default function TeacherContestsPage() {
 
   return (
     <div className="flex h-screen bg-background">
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} userType="teacher" />
+      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
@@ -196,5 +196,13 @@ export default function TeacherContestsPage() {
             <Tabs defaultValue="active" className="w-full">
               <TabsList className="mb-6">
                 <TabsTrigger value="active">Active Contests</TabsTrigger>
-                <TabsTrigger value="drafts">Drafts</TabsT
-
+                <TabsTrigger value="drafts">Drafts</TabsTrigger>
+                <TabsTrigger value="past">Past Contests</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        </main>
+      </div>
+    </div>
+  )
+} 

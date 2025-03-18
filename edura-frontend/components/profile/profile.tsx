@@ -81,7 +81,7 @@ export default function Profile() {
               <Card className="md:col-span-1">
                 <CardHeader className="text-center">
                   <Avatar className="h-24 w-24 mx-auto mb-4">
-                    <AvatarImage src="https://source.unsplash.com/random/200x200/?portrait" alt={user.username} />
+                    <AvatarImage src="/placeholder-avatar.png" alt={user.username} />
                     <AvatarFallback className="bg-orange-500 text-white text-2xl">
                       {getInitials(user.username)}
                     </AvatarFallback>
@@ -192,7 +192,7 @@ export default function Profile() {
                           </TableRow>
                           <TableRow>
                             <TableCell>Member Since</TableCell>
-                            <TableCell className="font-medium">{user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}</TableCell>
+                            <TableCell className="font-medium">N/A</TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>

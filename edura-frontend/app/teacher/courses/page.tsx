@@ -1,12 +1,21 @@
-import TeacherCoursesPage from "@/components/teacher/teacher-courses"
+"use client"
+
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Teacher Courses | Edura Learning Platform",
-  description: "Manage your courses and content",
+  title: "Redirecting to Mentor Courses | Edura Learning Platform",
+  description: "Redirecting to Mentor Courses page.",
 }
 
-export default function TeacherCourses() {
-  return <TeacherCoursesPage />
+export default function TeacherCoursesRedirect() {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.push("/mentor/courses")
+  }, [router])
+
+  return null
 }
 
