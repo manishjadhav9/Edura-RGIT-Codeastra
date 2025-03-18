@@ -5,7 +5,7 @@ IntelliLearn is a dynamic and user-friendly educational platform that streamline
 
 ## Tech Stack
 - **Backend**: Flask with SQLite
-- **Frontend**: React with Vite
+- **Frontend**: React with Vite and TailwindCSS
 - **AI Integration**: Gemini API for personalization and tutoring
 
 ## Core Features
@@ -148,14 +148,6 @@ IntelliLearn is a dynamic and user-friendly educational platform that streamline
 - Profile and achievement displays
 - Contest hub and submission interface
 - TutorBot chat interface
-
-## Contributing
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to your branch
-5. Create a pull request
-
 
 ## Team
 Volemort
