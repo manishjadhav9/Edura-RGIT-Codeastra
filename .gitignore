@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+Edura-backend/__pycache__/utils.cpython-313.pyc
+Edura-backend/apis/__pycache__/__init__.cpython-313.pyc
+Edura-backend/apis/__pycache__/areas_of_interest.cpython-313.pyc
+Edura-backend/apis/__pycache__/users.cpython-313.pyc
