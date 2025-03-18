@@ -47,10 +47,10 @@ export default function GameCharacter({ position, health }: GameCharacterProps) 
 
   return (
     <div 
-      className={`absolute bottom-16 transition-all duration-300 ease-in-out ${direction === 'left' ? 'scale-x-[-1]' : ''}`}
+      className={`absolute bottom-24 transition-all duration-300 ease-in-out ${direction === 'left' ? 'scale-x-[-1]' : ''}`}
       style={{ left: `${position}%` }}
     >
-      <div className="relative w-24 h-28">
+      <div className="relative w-32 h-36">
         <Image 
           src={getCharacterImage()}
           alt="Game Character"
