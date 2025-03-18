@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Award, Coins, BookOpen, Clock, GraduationCap, Trophy } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 
 export default function Profile() {
@@ -39,6 +40,13 @@ export default function Profile() {
       .join(' ')
   }
 
+  // Mock badges data - in a real app, this would come from the API
+  const userBadges = [
+    { id: 1, name: "Fast Learner", description: "Completed 5 courses in record time", icon: <Clock className="h-5 w-5" /> },
+    { id: 2, name: "Knowledge Master", description: "Scored 90%+ in 3 consecutive quizzes", icon: <BookOpen className="h-5 w-5" /> },
+    { id: 3, name: "Rising Star", description: "Earned 1000 LearnCoins", icon: <Trophy className="h-5 w-5" /> },
+  ]
+
   if (!user) {
     return (
       <div className="flex h-screen bg-background">
@@ -63,7 +71,7 @@ export default function Profile() {
         <Header />
 
         <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-muted/30">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             <div className="mb-6">
               <h1 className="text-2xl md:text-3xl font-bold text-foreground">My Profile</h1>
               <p className="text-muted-foreground mt-1">View and manage your profile information</p>
@@ -73,7 +81,7 @@ export default function Profile() {
               <Card className="md:col-span-1">
                 <CardHeader className="text-center">
                   <Avatar className="h-24 w-24 mx-auto mb-4">
-                    <AvatarImage src="/placeholder.svg?height=96&width=96" alt={user.username} />
+                    <AvatarImage src="https://source.unsplash.com/random/200x200/?portrait" alt={user.username} />
                     <AvatarFallback className="bg-orange-500 text-white text-2xl">
                       {getInitials(user.username)}
                     </AvatarFallback>
@@ -99,16 +107,35 @@ export default function Profile() {
                         <p className="font-medium">{user.institute_company}</p>
                       </div>
                     )}
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="outline" className="bg-orange-100 text-orange-800 hover:bg-orange-100">
-                        {user.exp} XP
-                      </Badge>
-                      <Badge variant="outline" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
-                        {user.coins} Coins
-                      </Badge>
-                      <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-100">
-                        Rank {user.rank}
-                      </Badge>
+                    <div className="grid grid-cols-2 gap-3 pt-2">
+                      <div className="flex items-center gap-2 bg-amber-100 rounded-lg p-2 text-amber-800">
+                        <Coins className="h-5 w-5" />
+                        <div>
+                          <p className="text-xs font-semibold">LearnCoins</p>
+                          <p className="text-base font-bold">{user.coins}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 bg-purple-100 rounded-lg p-2 text-purple-800">
+                        <Award className="h-5 w-5" />
+                        <div>
+                          <p className="text-xs font-semibold">Badges</p>
+                          <p className="text-base font-bold">{userBadges.length}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 bg-orange-100 rounded-lg p-2 text-orange-800">
+                        <GraduationCap className="h-5 w-5" />
+                        <div>
+                          <p className="text-xs font-semibold">XP Points</p>
+                          <p className="text-base font-bold">{user.exp}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 bg-blue-100 rounded-lg p-2 text-blue-800">
+                        <Trophy className="h-5 w-5" />
+                        <div>
+                          <p className="text-xs font-semibold">Rank</p>
+                          <p className="text-base font-bold">{user.rank}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -124,6 +151,7 @@ export default function Profile() {
                     <TabsList className="mb-4">
                       <TabsTrigger value="interests">Interests</TabsTrigger>
                       <TabsTrigger value="activity">Activity</TabsTrigger>
+                      <TabsTrigger value="badges">Badges</TabsTrigger>
                     </TabsList>
                     <TabsContent value="interests">
                       {user.interests && user.interests.length > 0 ? (
@@ -149,22 +177,40 @@ export default function Profile() {
                         <TableBody>
                           <TableRow>
                             <TableCell>Experience Points</TableCell>
-                            <TableCell>{user.exp}</TableCell>
+                            <TableCell className="font-medium">{user.exp}</TableCell>
                           </TableRow>
                           <TableRow>
                             <TableCell>Learn Coins</TableCell>
-                            <TableCell>{user.coins}</TableCell>
+                            <TableCell className="font-medium flex items-center gap-2">
+                              <Coins className="h-4 w-4 text-amber-500" />
+                              {user.coins}
+                            </TableCell>
                           </TableRow>
                           <TableRow>
                             <TableCell>Current Rank</TableCell>
-                            <TableCell>{user.rank}</TableCell>
+                            <TableCell className="font-medium">{user.rank}</TableCell>
                           </TableRow>
                           <TableRow>
                             <TableCell>Member Since</TableCell>
-                            <TableCell>{user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}</TableCell>
+                            <TableCell className="font-medium">{user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}</TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
+                    </TabsContent>
+                    <TabsContent value="badges">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {userBadges.map((badge) => (
+                          <div key={badge.id} className="border rounded-lg p-4 flex items-start gap-3">
+                            <div className="bg-purple-100 p-2 rounded-full text-purple-600">
+                              {badge.icon}
+                            </div>
+                            <div>
+                              <h4 className="font-semibold">{badge.name}</h4>
+                              <p className="text-sm text-muted-foreground">{badge.description}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </TabsContent>
                   </Tabs>
                 </CardContent>

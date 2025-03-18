@@ -328,7 +328,9 @@ export default function GameEngine() {
         
         {/* Game Monster when present */}
         {gameState.currentMonster && (
-          <GameMonster monster={gameState.currentMonster} position={85} />
+          <div className="monster-appearance-animation">
+            <GameMonster monster={gameState.currentMonster} position={85} />
+          </div>
         )}
 
         {/* Dialog Box */}
@@ -346,13 +348,13 @@ export default function GameEngine() {
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4">
             <Button 
               onClick={() => moveCharacter('left')}
-              className="bg-blue-700 hover:bg-blue-800 rounded-full w-14 h-14 p-0 shadow-lg border-2 border-blue-300"
+              className="adventure-button rounded-full w-14 h-14 p-0 text-2xl"
             >
               ←
             </Button>
             <Button 
               onClick={() => moveCharacter('right')}
-              className="bg-blue-700 hover:bg-blue-800 rounded-full w-14 h-14 p-0 shadow-lg border-2 border-blue-300"
+              className="adventure-button rounded-full w-14 h-14 p-0 text-2xl"
             >
               →
             </Button>
@@ -361,19 +363,23 @@ export default function GameEngine() {
 
         {/* Victory overlay */}
         {gameState.showVictory && (
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-500/80 to-purple-800/80 flex flex-col items-center justify-center text-white p-8 z-50">
-            <h1 className="text-4xl font-bold mb-6">Victory!</h1>
-            <Image 
-              src={characterImages.victory} 
-              alt="Victory" 
-              width={200} 
-              height={200}
-            />
-            <p className="text-xl mb-8 text-center">
+          <div className="absolute inset-0 bg-gradient-to-b from-amber-500/80 to-amber-800/80 flex flex-col items-center justify-center text-white p-8 z-50">
+            <h1 className="text-4xl font-bold mb-6 text-yellow-100">Victory!</h1>
+            <div className="relative">
+              <div className="absolute inset-0 bg-yellow-600/30 rounded-full filter blur-xl"></div>
+              <Image 
+                src={characterImages.victory} 
+                alt="Victory" 
+                width={200} 
+                height={200}
+                className="relative z-10"
+              />
+            </div>
+            <p className="text-xl mb-8 text-center text-yellow-100 max-w-lg">
               Congratulations! You've mastered SQL and escaped the jungle. 
               You've learned all the key SQL concepts and are now a database champion!
             </p>
-            <Button onClick={handleVictoryComplete} className="bg-yellow-500 hover:bg-yellow-600 text-black">
+            <Button onClick={handleVictoryComplete} className="bg-yellow-500 hover:bg-yellow-600 text-amber-900 border-2 border-amber-900 font-bold shadow-lg">
               Return to Story Mode
             </Button>
           </div>

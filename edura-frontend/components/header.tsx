@@ -22,6 +22,10 @@ export default function Header() {
     logout()
   }
 
+  const navigateToProfile = () => {
+    router.push(user?.role === "teacher" ? "/teacher/profile" : "/profile")
+  }
+
   // Get initials from username for avatar fallback
   const getInitials = (name: string) => {
     return name
@@ -35,13 +39,22 @@ export default function Header() {
     <header className="bg-background border-b border-border h-16 flex items-center px-4 md:px-6">
       <div className="flex-1"></div>
       <div className="flex items-center gap-4">
+        <Button 
+          variant="ghost" 
+          className="relative rounded-full overflow-hidden p-0" 
+          onClick={navigateToProfile}
+        >
+          <Avatar className="h-10 w-10">
+            <AvatarImage src="https://source.unsplash.com/random/100x100/?portrait" alt={user?.username || "User"} />
+            <AvatarFallback className="bg-orange-500 text-white">{user?.username ? getInitials(user.username) : "U"}</AvatarFallback>
+          </Avatar>
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src="/placeholder.svg?height=40&width=40" alt={user?.username || "User"} />
-                <AvatarFallback className="bg-orange-500 text-white">{user?.username ? getInitials(user.username) : "U"}</AvatarFallback>
-              </Avatar>
+            <Button variant="ghost" className="relative h-8 w-8">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -53,7 +66,7 @@ export default function Header() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push(user?.role === "teacher" ? "/teacher/profile" : "/profile")}>Profile</DropdownMenuItem>
+            <DropdownMenuItem onClick={navigateToProfile}>Profile</DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push(user?.role === "teacher" ? "/teacher/settings" : "/settings")}>Account Settings</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />

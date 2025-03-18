@@ -16,43 +16,43 @@ export const characterImages = {
 // Monster images with thematic visuals for each SQL concept
 export const monsterImages = {
   // Level 1: Databases & Tables - Organized structures
-  tabularTitan: "https://images.unsplash.com/photo-1534398079543-7ae6d016b86a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // Giant rock formations resembling tables/organization
+  tabularTitan: "/sql-game/monsters/monster1.png", 
   
   // Level 2: Data Types - Different types/categories
-  typeTrickster: "https://images.unsplash.com/photo-1602934585418-f588bea4215c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // Colorful chameleon representing changing types
+  typeTrickster: "/sql-game/monsters/monster2.png", 
   
   // Level 3: Constraints - Boundaries and rules
-  constrainedColossus: "https://images.unsplash.com/photo-1518391846015-55a9cc003b25?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // Stone statue with defined boundaries/barriers
+  constrainedColossus: "/sql-game/monsters/monster3.png", 
   
   // Level 4: DDL Commands - Architectural/structural
-  schemaShifter: "https://images.unsplash.com/photo-1545987796-200677ee1011?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // Builder/architect figure manipulating structure
+  schemaShifter: "/sql-game/monsters/monster4.png", 
   
   // Level 5: DML Commands - Data movement/transformation
-  dataManipulator: "https://images.unsplash.com/photo-1600456899121-68eda5705257?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // Hands manipulating/molding clay/data
+  dataManipulator: "/sql-game/monsters/monster5.png", 
   
   // Level 6: DCL Commands - Security/permissions
-  permissionPhantom: "https://images.unsplash.com/photo-1635405446898-dd55892fa1e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // Ghostly guardian figure with keys/locks
+  permissionPhantom: "/sql-game/monsters/monster6.png", 
   
   // Level 7: TCL Commands - Transactions/all-or-nothing
-  transactionTroll: "https://images.unsplash.com/photo-1547398876-2c418a5bdfbc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // Bridge troll controlling passage/transactions
+  transactionTroll: "/sql-game/monsters/monster7.png", 
   
   // Level 8: Joins - Connections between things
-  joinJaguar: "https://images.unsplash.com/photo-1551972873-b7e8754e8e26?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // Jaguar on branch connecting trees/environments
+  joinJaguar: "/sql-game/monsters/monster8.png", 
   
   // Level 9: Subqueries & Nested Queries - Complexity/nesting
-  nestedNaga: "https://images.unsplash.com/photo-1531750462159-36aba7ce08ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // Snake coiled in complex nested patterns
+  nestedNaga: "/sql-game/monsters/monster9.png", 
   
   // Level 10: Views - Perspective/windows
-  viewpointViper: "https://images.unsplash.com/photo-1531386151447-fd76ad50012f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // Snake with penetrating gaze/perspective
+  viewpointViper: "/sql-game/monsters/monster10.png", 
   
   // Level 11: Indexes - Organization/reference
-  indexImp: "https://images.unsplash.com/photo-1607375698531-fd8ffad8e2e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // Small mischievous creature organizing books/indices
+  indexImp: "/sql-game/monsters/monster11.png", 
   
   // Level 12: Stored Procedures & Functions - Packages/containers
-  procedurePoltergeist: "https://images.unsplash.com/photo-1568626631669-ac6e7cbde538?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // Mysterious spirit figure with mystical containers/packages
+  procedurePoltergeist: "/sql-game/monsters/monster12.png", 
   
   // Level 13: Final Boss - SQL Mastery
-  databaseDragon: "https://images.unsplash.com/photo-1577368211130-4bbd0181ddf7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" // Majestic dragon-like creature with powerful presence
+  databaseDragon: "/sql-game/monsters/monster13.png" 
 };
 
 // World/environment images for different game sections
@@ -76,7 +76,7 @@ export const worldImages = {
 // Journey map images
 export const journeyImages = {
   // Main map background
-  mapBackground: "https://images.unsplash.com/photo-1561016444-14f747499547?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80", // Vintage adventure map texture
+  mapBackground: "/assets/map3.jpg", // Local map file
   
   // Path illustration
   pathTexture: "https://images.unsplash.com/photo-1542292765-68c2bc24a6fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // Natural path/trail texture

@@ -6,7 +6,7 @@ import Header from "@/components/header"
 import CourseCard from "@/components/courses/course-card"
 import ProgressCard from "@/components/dashboard/progress-card"
 import UpcomingCard from "@/components/dashboard/upcoming-card"
-import { Bell, Search } from "lucide-react"
+import { Bell, Search, Coins, Award } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useAuth } from "@/contexts/auth-context"
@@ -34,7 +34,17 @@ export default function Dashboard() {
                 <p className="text-muted-foreground mt-1">Welcome back, {user?.username || 'Student'}!</p>
               </div>
 
-              <div className="mt-4 md:mt-0 flex w-full md:w-auto gap-2">
+              <div className="mt-4 md:mt-0 flex w-full md:w-auto gap-3 items-center">
+                <div className="flex items-center gap-3 mr-2">
+                  <div className="flex items-center gap-1.5 bg-amber-100 text-amber-800 px-3 py-1 rounded-full">
+                    <Coins className="h-4 w-4" />
+                    <span className="text-sm font-medium">{user?.coins || 0}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 bg-purple-100 text-purple-800 px-3 py-1 rounded-full">
+                    <Award className="h-4 w-4" />
+                    <span className="text-sm font-medium">3</span>
+                  </div>
+                </div>
                 <div className="relative w-full md:w-64">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input type="search" placeholder="Search..." className="pl-8 bg-background border-muted" />
@@ -77,7 +87,7 @@ export default function Dashboard() {
                 title="UI/UX Design Fundamentals"
                 instructor="Sarah Johnson"
                 progress={75}
-                image="/placeholder.svg?height=200&width=400"
+                image="https://source.unsplash.com/random/800x600/?design"
                 lessons={12}
                 duration="6 weeks"
               />
@@ -85,7 +95,7 @@ export default function Dashboard() {
                 title="Frontend Web Development"
                 instructor="Michael Chen"
                 progress={50}
-                image="/placeholder.svg?height=200&width=400"
+                image="https://source.unsplash.com/random/800x600/?coding"
                 lessons={24}
                 duration="8 weeks"
               />
@@ -93,7 +103,7 @@ export default function Dashboard() {
                 title="Mobile App Development"
                 instructor="Jessica Lee"
                 progress={30}
-                image="/placeholder.svg?height=200&width=400"
+                image="https://source.unsplash.com/random/800x600/?mobile"
                 lessons={18}
                 duration="10 weeks"
               />
@@ -101,7 +111,7 @@ export default function Dashboard() {
                 title="Data Visualization"
                 instructor="Robert Smith"
                 progress={0}
-                image="/placeholder.svg?height=200&width=400"
+                image="https://source.unsplash.com/random/800x600/?data"
                 lessons={15}
                 duration="5 weeks"
               />

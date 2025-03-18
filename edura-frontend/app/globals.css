@@ -78,3 +78,94 @@
   @apply mb-4;
 }
 
+/* SQL Game Styling */
+.monster-appearance-animation {
+  animation: monsterAppear 1s ease-out forwards;
+  filter: drop-shadow(0 0 10px rgba(217, 119, 6, 0.4));
+}
+
+@keyframes monsterAppear {
+  0% {
+    transform: translateY(30px) scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-10px) scale(1.05);
+    opacity: 1;
+  }
+  80% {
+    transform: translateY(5px) scale(0.98);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Map Path Animation */
+.map-path-animation {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawPath 3s ease-in-out forwards;
+}
+
+@keyframes drawPath {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Monster Icon Hover Effect */
+.monster-icon {
+  transition: all 0.3s ease;
+}
+
+.monster-icon:hover {
+  transform: scale(1.1);
+  filter: brightness(1.1) drop-shadow(0 0 5px rgba(217, 119, 6, 0.6));
+}
+
+/* Cartoon-style game window container */
+.game-window-container {
+  height: 600px;
+  background-color: #fff8e1;
+  background-image: 
+    linear-gradient(to bottom, rgba(217, 119, 6, 0.05), rgba(180, 83, 9, 0.1)),
+    url('/assets/map3.jpg'),
+    radial-gradient(circle at 70% 40%, rgba(146, 64, 14, 0.08) 0%, transparent 60%);
+  background-size: cover, cover, auto;
+  background-position: center;
+  background-blend-mode: overlay, soft-light, normal;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Adventure-style button for game */
+.adventure-button {
+  position: relative;
+  background-color: #d97706;
+  border: 2px solid #78350f;
+  color: #fef3c7;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.adventure-button:hover {
+  transform: translateY(-2px);
+  background-color: #b45309;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.adventure-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+}
+
