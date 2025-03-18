@@ -22,7 +22,7 @@ IntelliLearn is a dynamic and user-friendly educational platform that streamline
 - Progress tracking
 
 ### 3. Gamification
-- LearnCoins economy for rewarding activities
+- EDUCOIN economy for rewarding activities
 - Experience points and leveling system
 - Badges for achievements
 - Global and category-specific leaderboards
@@ -82,7 +82,7 @@ IntelliLearn is a dynamic and user-friendly educational platform that streamline
 - [ ] Set up basic progress tracking
 
 ### Phase 3: Gamification & Community (Weeks 5-6)
-- [ ] Implement LearnCoins economy
+- [ ] Implement EDUCOIN economy
 - [ ] Create experience and leveling system
 - [ ] Design badge award system
 - [ ] Build discussion forums

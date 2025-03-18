@@ -140,7 +140,7 @@ export default function Onboarding() {
                 <h3 className="text-xl font-semibold">Gamification</h3>
               </div>
               <p className="text-gray-600">
-                Earn LearnCoins, level up, and unlock achievements as you learn.
+                Earn EDUCOINS, level up, and unlock achievements as you learn.
               </p>
             </Card>
 
