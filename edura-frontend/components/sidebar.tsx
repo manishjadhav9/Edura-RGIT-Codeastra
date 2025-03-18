@@ -18,15 +18,17 @@ import {
   FileText,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/contexts/auth-context"
 
 interface SidebarProps {
   isOpen: boolean
   toggleSidebar: () => void
-  userType?: "student" | "teacher"
 }
 
-export default function Sidebar({ isOpen, toggleSidebar, userType = "student" }: SidebarProps) {
+export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
   const pathname = usePathname()
+  const { user } = useAuth()
+  const userType = user?.role === "teacher" ? "teacher" : "student"
 
   const studentMenuItems = [
     { id: "dashboard", label: "Dashboard", icon: Home, path: "/dashboard" },

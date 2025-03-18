@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 const studentFormSchema = z
   .object({
@@ -20,8 +21,9 @@ const studentFormSchema = z
     email: z.string().email({ message: "Please enter a valid email address" }),
     password: z.string().min(6, { message: "Password must be at least 6 characters" }),
     confirmPassword: z.string(),
-    interests: z.array(z.string()).min(1, { message: "Please select at least one interest" }),
-    educationLevel: z.string().min(1, { message: "Please select your education level" }),
+    interests: z.array(z.number()).min(1, { message: "Please select at least one interest" }),
+    qualification: z.string().min(1, { message: "Please select your education level" }),
+    institute_company: z.string().min(1, { message: "Please enter your institution" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -36,32 +38,23 @@ const teacherFormSchema = z
     confirmPassword: z.string(),
     specialization: z.string().min(1, { message: "Please enter your specialization" }),
     experience: z.string().min(1, { message: "Please select your experience level" }),
-    institution: z.string().min(1, { message: "Please enter your institution" }),
+    institute_company: z.string().min(1, { message: "Please enter your institution" }),
+    qualification: z.literal("teacher"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
   })
 
-const interestOptions = [
-  { id: "web-development", label: "Web Development" },
-  { id: "mobile-development", label: "Mobile Development" },
-  { id: "ui-ux-design", label: "UI/UX Design" },
-  { id: "data-science", label: "Data Science" },
-  { id: "machine-learning", label: "Machine Learning" },
-  { id: "cybersecurity", label: "Cybersecurity" },
-  { id: "cloud-computing", label: "Cloud Computing" },
-  { id: "game-development", label: "Game Development" },
-  { id: "blockchain", label: "Blockchain" },
-  { id: "devops", label: "DevOps" },
-]
-
+// Updated to match the backend schema
 const educationLevelOptions = [
-  { value: "high-school", label: "High School" },
+  { value: "middle_school", label: "Middle School" },
+  { value: "high_school", label: "High School" },
   { value: "undergraduate", label: "Undergraduate" },
   { value: "graduate", label: "Graduate" },
-  { value: "phd", label: "PhD" },
-  { value: "self-taught", label: "Self-taught" },
+  { value: "post_graduate", label: "Post Graduate" },
+  { value: "working_professional", label: "Working Professional" },
+  { value: "teacher", label: "Teacher" },
 ]
 
 const experienceLevelOptions = [
@@ -71,9 +64,36 @@ const experienceLevelOptions = [
   { value: "10+", label: "10+ years" },
 ]
 
+interface Interest {
+  id: number
+  name: string
+  description: string
+}
+
 export default function SignupForm() {
   const router = useRouter()
   const [userType, setUserType] = useState<"student" | "teacher">("student")
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [interests, setInterests] = useState<Interest[]>([])
+
+  useEffect(() => {
+    // Fetch all areas of interest from backend
+    const fetchInterests = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:5000/areas_of_interest/get_all_aoi")
+        const data = await response.json()
+        
+        if (data.success && data.interests) {
+          setInterests(data.interests)
+        }
+      } catch (err) {
+        console.error("Error fetching interests:", err)
+      }
+    }
+
+    fetchInterests()
+  }, [])
 
   const studentForm = useForm<z.infer<typeof studentFormSchema>>({
     resolver: zodResolver(studentFormSchema),
@@ -83,7 +103,8 @@ export default function SignupForm() {
       password: "",
       confirmPassword: "",
       interests: [],
-      educationLevel: "",
+      qualification: "",
+      institute_company: "",
     },
   })
 
@@ -96,24 +117,91 @@ export default function SignupForm() {
       confirmPassword: "",
       specialization: "",
       experience: "",
-      institution: "",
+      institute_company: "",
+      qualification: "teacher",
     },
   })
 
-  function onStudentSubmit(values: z.infer<typeof studentFormSchema>) {
-    // In a real app, this would call an API to create a new user
-    console.log("Student signup:", values)
+  async function onStudentSubmit(values: z.infer<typeof studentFormSchema>) {
+    setIsLoading(true)
+    setError(null)
+    
+    try {
+      const response = await fetch("http://127.0.0.1:5000/users/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: values.name,
+          email: values.email,
+          password: values.password,
+          role: "student",
+          qualification: values.qualification,
+          institute_company: values.institute_company,
+          interests: values.interests,
+        }),
+      })
 
-    // Redirect to dashboard after successful signup
-    router.push("/dashboard")
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || "Registration failed")
+      }
+
+      if (data.success) {
+        // Navigate to login page after successful registration
+        router.push("/login")
+      } else {
+        setError(data.message || "Registration failed")
+      }
+    } catch (err) {
+      console.error("Registration error:", err)
+      setError(err instanceof Error ? err.message : "Registration failed")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  function onTeacherSubmit(values: z.infer<typeof teacherFormSchema>) {
-    // In a real app, this would call an API to create a new teacher account
-    console.log("Teacher signup:", values)
+  async function onTeacherSubmit(values: z.infer<typeof teacherFormSchema>) {
+    setIsLoading(true)
+    setError(null)
+    
+    try {
+      const response = await fetch("http://127.0.0.1:5000/users/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: values.name,
+          email: values.email,
+          password: values.password,
+          role: "student", // Using student role for teacher as per backend schema
+          qualification: "teacher",
+          institute_company: values.institute_company,
+          interests: [], // Teachers don't have interests in this schema
+        }),
+      })
 
-    // Redirect to teacher dashboard after successful signup
-    router.push("/teacher/dashboard")
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || "Registration failed")
+      }
+
+      if (data.success) {
+        // Navigate to login page after successful registration
+        router.push("/login")
+      } else {
+        setError(data.message || "Registration failed")
+      }
+    } catch (err) {
+      console.error("Registration error:", err)
+      setError(err instanceof Error ? err.message : "Registration failed")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -135,6 +223,12 @@ export default function SignupForm() {
             <TabsTrigger value="student">Student</TabsTrigger>
             <TabsTrigger value="teacher">Teacher</TabsTrigger>
           </TabsList>
+
+          {error && (
+            <Alert variant="destructive" className="mt-4">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
           <TabsContent value="student">
             <Form {...studentForm}>
@@ -193,7 +287,7 @@ export default function SignupForm() {
                 />
                 <FormField
                   control={studentForm.control}
-                  name="educationLevel"
+                  name="qualification"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Education Level</FormLabel>
@@ -204,13 +298,26 @@ export default function SignupForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {educationLevelOptions.map((option) => (
+                          {educationLevelOptions.filter(option => option.value !== "teacher").map((option) => (
                             <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={studentForm.control}
+                  name="institute_company"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Institution</FormLabel>
+                      <FormControl>
+                        <Input placeholder="University or Organization" {...field} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -225,25 +332,25 @@ export default function SignupForm() {
                         <FormMessage />
                       </div>
                       <div className="grid grid-cols-2 gap-2">
-                        {interestOptions.map((option) => (
+                        {interests.map((interest) => (
                           <FormField
-                            key={option.id}
+                            key={interest.id}
                             control={studentForm.control}
                             name="interests"
                             render={({ field }) => {
                               return (
-                                <FormItem key={option.id} className="flex flex-row items-start space-x-2 space-y-0">
+                                <FormItem key={interest.id} className="flex flex-row items-start space-x-2 space-y-0">
                                   <FormControl>
                                     <Checkbox
-                                      checked={field.value?.includes(option.id)}
+                                      checked={field.value?.includes(interest.id)}
                                       onCheckedChange={(checked) => {
                                         return checked
-                                          ? field.onChange([...field.value, option.id])
-                                          : field.onChange(field.value?.filter((value) => value !== option.id))
+                                          ? field.onChange([...field.value, interest.id])
+                                          : field.onChange(field.value?.filter((value) => value !== interest.id))
                                       }}
                                     />
                                   </FormControl>
-                                  <FormLabel className="text-sm font-normal">{option.label}</FormLabel>
+                                  <FormLabel className="text-sm font-normal">{interest.name}</FormLabel>
                                 </FormItem>
                               )
                             }}
@@ -253,8 +360,12 @@ export default function SignupForm() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600">
-                  Create Student Account
+                <Button 
+                  type="submit" 
+                  className="w-full bg-orange-500 hover:bg-orange-600"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Creating Account..." : "Create Student Account"}
                 </Button>
               </form>
             </Form>
@@ -354,7 +465,7 @@ export default function SignupForm() {
                 />
                 <FormField
                   control={teacherForm.control}
-                  name="institution"
+                  name="institute_company"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Institution</FormLabel>
@@ -365,8 +476,12 @@ export default function SignupForm() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600">
-                  Create Teacher Account
+                <Button 
+                  type="submit" 
+                  className="w-full bg-orange-500 hover:bg-orange-600"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Creating Account..." : "Create Teacher Account"}
                 </Button>
               </form>
             </Form>

@@ -11,6 +11,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useAuth } from "@/contexts/auth-context"
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -19,7 +21,9 @@ const formSchema = z.object({
 
 export default function LoginForm() {
   const router = useRouter()
+  const { login } = useAuth()
   const [userType, setUserType] = useState<"student" | "teacher">("student")
+  const [error, setError] = useState<string | null>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -29,12 +33,36 @@ export default function LoginForm() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // In a real app, this would call an authentication API
-    console.log(values, userType)
-
-    // Redirect to dashboard after successful login
-    router.push("/dashboard")
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setError(null)
+    
+    try {
+      const success = await login(values.email, values.password)
+      
+      if (success) {
+        // Get stored user data
+        const userDataString = localStorage.getItem("userData")
+        if (userDataString) {
+          const userData = JSON.parse(userDataString)
+          
+          // Redirect based on role
+          if (userData.role === "student") {
+            router.push("/dashboard")
+          } else if (userData.role === "teacher") {
+            router.push("/teacher/dashboard")
+          } else {
+            router.push("/dashboard")
+          }
+        } else {
+          router.push("/dashboard")
+        }
+      } else {
+        setError("Invalid credentials")
+      }
+    } catch (err) {
+      console.error("Login error:", err)
+      setError(err instanceof Error ? err.message : "Login failed")
+    }
   }
 
   return (
@@ -57,6 +85,12 @@ export default function LoginForm() {
             <TabsTrigger value="teacher">Teacher</TabsTrigger>
           </TabsList>
         </Tabs>
+
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -86,8 +120,12 @@ export default function LoginForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600">
-              Login
+            <Button 
+              type="submit" 
+              className="w-full bg-orange-500 hover:bg-orange-600"
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? "Logging in..." : "Login"}
             </Button>
           </form>
         </Form>

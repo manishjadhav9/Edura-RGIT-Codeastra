@@ -9,9 +9,11 @@ import UpcomingCard from "@/components/dashboard/upcoming-card"
 import { Bell, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const { user } = useAuth()
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen)
@@ -29,7 +31,7 @@ export default function Dashboard() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-foreground">Dashboard</h1>
-                <p className="text-muted-foreground mt-1">Welcome back, Alex!</p>
+                <p className="text-muted-foreground mt-1">Welcome back, {user?.username || 'Student'}!</p>
               </div>
 
               <div className="mt-4 md:mt-0 flex w-full md:w-auto gap-2">
