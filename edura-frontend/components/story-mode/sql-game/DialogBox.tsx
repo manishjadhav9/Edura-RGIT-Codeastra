@@ -9,9 +9,10 @@ interface DialogBoxProps {
   speaker: 'character' | 'monster' | 'narrator'
   speakerName: string
   onComplete: () => void
+  monsterImage?: string // Add optional monsterImage prop
 }
 
-export default function DialogBox({ text, speaker, speakerName, onComplete }: DialogBoxProps) {
+export default function DialogBox({ text, speaker, speakerName, onComplete, monsterImage }: DialogBoxProps) {
   const [currentTextIndex, setCurrentTextIndex] = useState(0)
   const [displayedText, setDisplayedText] = useState('')
   const [isTyping, setIsTyping] = useState(true)
@@ -64,8 +65,8 @@ export default function DialogBox({ text, speaker, speakerName, onComplete }: Di
   // Get avatar based on speaker and context
   const getAvatar = () => {
     if (speaker === 'monster') {
-      // Use a generic monster image for when monsters are speaking
-      return 'https://images.unsplash.com/photo-1581535269427-8ab4d73c1c23?q=80&w=400&auto=format&fit=crop' // Fantasy creature image
+      // Use the specific monster image if provided, otherwise fallback to generic image
+      return monsterImage || '/sql-game/monsters/monster1.png'
     }
     
     // Different EduGuide images for different contexts
@@ -135,7 +136,7 @@ export default function DialogBox({ text, speaker, speakerName, onComplete }: Di
   const style = getDialogStyle()
 
   return (
-    <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-[95%] max-w-4xl z-20 shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
+    <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 w-[95%] max-w-4xl z-40 shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
       {/* Pixel art dialog box */}
       <div className={`${style.bgColor} border-4 ${style.borderColor} rounded-lg p-2 md:p-4 shadow-lg`}>
         <div className="flex items-start gap-3">
@@ -145,7 +146,8 @@ export default function DialogBox({ text, speaker, speakerName, onComplete }: Di
               src={getAvatar()}
               alt={speakerName}
               fill
-              style={{ objectFit: 'cover' }}
+              style={{ objectFit: 'contain' }}
+              className={speaker === 'monster' ? 'bg-white/90 p-1' : ''}
             />
             <div className="absolute inset-0 border-4 border-dashed border-opacity-10"></div>
           </div>
@@ -169,7 +171,7 @@ export default function DialogBox({ text, speaker, speakerName, onComplete }: Di
         <div className="mt-3 flex justify-end">
           <Button 
             onClick={handleNext}
-            className={`${style.buttonColor} rounded-md shadow-md px-3 py-1 border-2 border-white`}
+            className={`${style.buttonColor} rounded-md shadow-md px-3 py-1 border-2 border-white text-white`}
           >
             {isTyping ? 'Skip' : currentTextIndex === text.length - 1 ? 'Continue' : 'Next'} 
             {!isTyping && <span className="ml-2 animate-bounce inline-block">▼</span>}

@@ -83,19 +83,15 @@ export default function JourneyMap({ onStartGame }: JourneyMapProps) {
             fill
             style={{ objectFit: 'cover', opacity: 0.95 }}
             priority
+            unoptimized
+            quality={100}
+            sizes="100vw"
+            className="bg-no-repeat bg-center bg-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-amber-800/10 to-amber-700/20"></div>
         </div>
 
-        {/* Map overlay texture for vintage feel */}
-        <div className="absolute inset-0 z-1 opacity-20 mix-blend-overlay">
-          <Image 
-            src="https://images.unsplash.com/photo-1557682250-81b086e7b96b?q=80&w=2070&auto=format&fit=crop"
-            alt="Map Texture"
-            fill
-            style={{ objectFit: 'cover' }}
-          />
-        </div>
+        {/* Map overlay texture for vintage feel - removed to show the actual map clearly */}
 
         {/* Map decorative elements - Compass rose */}
         <motion.div
@@ -328,7 +324,7 @@ export default function JourneyMap({ onStartGame }: JourneyMapProps) {
           transition={{ delay: 1, duration: 0.5, type: "spring" }}
         >
           <div className="relative">
-            <motion.div 
+          <motion.div 
               className="relative w-20 h-20 bg-amber-100/80 rounded-full p-1 border-2 border-amber-700 overflow-hidden shadow-lg"
               animate={{ 
                 y: [0, -5, 0],
@@ -346,15 +342,15 @@ export default function JourneyMap({ onStartGame }: JourneyMapProps) {
                   duration: 3
                 }
               }}
-            >
-              <Image 
+          >
+            <Image 
                 src="/eduguide-ready-for-quest.png"
-                alt="EduGuide Character"
-                fill
+              alt="EduGuide Character"
+              fill
                 style={{ objectFit: 'contain', objectPosition: 'center 40%' }}
                 className="scale-[1.2]"
-              />
-            </motion.div>
+            />
+          </motion.div>
             <motion.div 
               className="absolute -bottom-1 -right-1 w-8 h-8 bg-amber-600 rounded-full flex items-center justify-center border-2 border-amber-800"
               animate={{ rotate: [0, 10, 0, -10, 0] }}
@@ -402,17 +398,17 @@ export default function JourneyMap({ onStartGame }: JourneyMapProps) {
               onClick={() => setActiveLevel(monster.id === activeLevel ? null : monster.id)}
             >
               {/* Level marker with monster image */}
-              <div className={`relative w-14 h-14 rounded-full overflow-hidden border-4 ${isActive || isHovered ? 'border-yellow-500 shadow-lg shadow-yellow-300/50' : 'border-amber-700'} transition-all duration-300 bg-amber-100/80 monster-icon`}>
+              <div className={`relative w-16 h-16 rounded-full overflow-hidden border-4 ${isActive || isHovered ? 'border-yellow-500 shadow-lg shadow-yellow-300/50' : 'border-amber-700'} transition-all duration-300 bg-amber-100/80 monster-icon`}>
                 <Image 
                   src={monster.image}
                   alt={monster.name}
                   fill
                   style={{ objectFit: 'contain' }}
-                  className={`transition-all duration-300 p-1 ${isCompleted ? 'grayscale-0' : 'grayscale-[0%]'} ${isActive || isHovered ? 'grayscale-0 scale-110' : ''}`}
+                  className={`transition-all duration-300 p-1 bg-white/90 ${isCompleted ? 'grayscale-0' : 'grayscale-[0%]'} ${isActive || isHovered ? 'grayscale-0 scale-110' : ''}`}
                 />
                 
                 {/* Level number badge */}
-                <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-amber-800 border-2 border-amber-100 flex items-center justify-center text-amber-100 font-bold text-xs">
+                <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-amber-800 border-2 border-amber-100 flex items-center justify-center text-amber-100 font-bold text-xs z-20">
                   {monster.id}
                 </div>
               </div>
@@ -420,8 +416,8 @@ export default function JourneyMap({ onStartGame }: JourneyMapProps) {
               {/* Monster name label - visible only on hover/active to reduce clutter */}
               {(isActive || isHovered) && (
                 <div className={`absolute -bottom-8 left-1/2 transform -translate-x-1/2 px-2 py-1 rounded-lg text-xs font-bold whitespace-nowrap shadow-md border w-max text-center transition-all duration-300 bg-yellow-100 border-yellow-500 scale-110`}>
-                  {monster.name}
-                </div>
+                {monster.name}
+              </div>
               )}
 
               {/* Info popup on hover or active */}
@@ -517,23 +513,28 @@ export default function JourneyMap({ onStartGame }: JourneyMapProps) {
           transition={{ delay: 3, duration: 0.7, type: "spring" }}
         >
           <motion.div 
-            className="relative w-20 h-20"
+            className="relative w-24 h-24"
             animate={{ 
               boxShadow: ["0px 0px 8px 2px rgba(255,215,0,0.3)", "0px 0px 16px 4px rgba(255,215,0,0.6)", "0px 0px 8px 2px rgba(255,215,0,0.3)"]
             }}
             transition={{ duration: 2, repeat: Infinity }}
           >
             <div className="absolute inset-0 rounded-lg border-4 border-yellow-600 overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-300/60 to-yellow-600/60"></div>
-              <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="#ffd700" strokeWidth="2" strokeDasharray="5,3" />
-                <path d="M35,35 L65,35 L65,65 L35,65 Z" fill="none" stroke="#ffd700" strokeWidth="1" />
-                <text x="50" y="30" fontSize="10" fill="#ffd700" textAnchor="middle">FREEDOM</text>
-              </svg>
+              <Image 
+                src="/assets/freedom.jpg"
+                alt="Freedom Gate"
+                fill
+                style={{ objectFit: 'cover' }}
+                className="transition-all duration-500"
+                unoptimized
+                quality={100}
+              />
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-300/30 to-yellow-600/40"></div>
+              <div className="absolute top-0 left-0 right-0 bg-yellow-600/80 text-center text-white text-xs font-bold py-1">FREEDOM</div>
             </div>
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className="absolute -bottom-2 -right-2">
               <motion.span 
-                className="text-3xl drop-shadow-lg" 
+                className="text-2xl drop-shadow-lg" 
                 animate={{ scale: [1, 1.2, 1], rotate: [0, 5, 0, -5, 0] }}
                 transition={{ duration: 4, repeat: Infinity }}
               >
@@ -541,7 +542,7 @@ export default function JourneyMap({ onStartGame }: JourneyMapProps) {
               </motion.span>
             </div>
           </motion.div>
-          <div className="text-center mt-2">
+          <div className="text-center mt-4">
             <span className="text-sm font-bold bg-yellow-500/90 px-3 py-1 rounded-lg shadow-md border border-yellow-600 text-amber-900">
               FREEDOM!
             </span>
@@ -569,20 +570,20 @@ export default function JourneyMap({ onStartGame }: JourneyMapProps) {
         </motion.div>
 
         {/* Sea monster decoration */}
-        <motion.div
+          <motion.div 
           className="absolute bottom-[5%] left-[20%] z-5 opacity-60"
-          initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 0.6, y: 0 }}
           transition={{ delay: 2.5, duration: 1 }}
-        >
-          <Image 
+          >
+              <Image
             src="https://images.unsplash.com/photo-1590873345919-9ca871aeb0c4?q=80&w=500&auto=format&fit=crop"
             alt="Sea monster"
             width={60}
             height={60}
             className="drop-shadow-md"
           />
-        </motion.div>
+          </motion.div>
       </div>
 
       {/* Start journey button */}

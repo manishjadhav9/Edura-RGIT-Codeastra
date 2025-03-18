@@ -49,95 +49,95 @@ export default function SQLQueryInput({ monster, onSubmit }: SQLQueryInputProps)
   }
 
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between bg-blue-900 text-white px-4 py-2 rounded-t-md">
-        <div className="flex items-center gap-3">
-          <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-blue-300">
-            <Image 
-              src={monster.image}
-              alt={monster.name}
-              fill
-              style={{ objectFit: 'cover' }}
-            />
-          </div>
-          <div>
-            <h3 className="font-bold text-lg">{monster.name} Challenge</h3>
-            <p className="text-sm text-blue-200">{monster.concept}</p>
-          </div>
-        </div>
-        <div className="bg-yellow-400/80 text-xs px-2 py-1 rounded-full text-blue-900 font-bold">
-          Skill: {monster.skill}
-        </div>
-      </div>
-      
-      <div className="bg-white p-4 shadow-md rounded-b-md">
-        <div className="mb-4">
-          <div className="flex items-center mb-3">
-            <div className="bg-blue-100 p-2 rounded-md border-l-4 border-blue-500 flex-1">
-              <div className="font-medium">{monster.challenge}</div>
-              <div className="text-sm font-medium mt-1">Task: {monster.task}</div>
+    <div className="w-full h-full flex flex-col">
+      <div className="mb-4">
+        <div className="bg-blue-100 p-3 rounded-md border-l-4 border-blue-500">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-blue-300 flex-shrink-0">
+              <Image 
+                src={monster.image}
+                alt={monster.name}
+                fill
+                style={{ objectFit: 'contain' }}
+                className="bg-white p-1"
+              />
+            </div>
+            <div>
+              <h3 className="font-bold text-lg text-blue-900">{monster.name}</h3>
+              <p className="text-sm text-blue-700">{monster.concept}</p>
             </div>
           </div>
+          <div className="font-medium text-blue-800">{monster.challenge}</div>
+          <div className="text-sm font-medium mt-1 text-blue-700">Task: {monster.task}</div>
+        </div>
+      </div>
           
-          {monster.hint && (
-            <div className="bg-yellow-50 p-2 border-l-4 border-yellow-400 mb-4 text-sm">
-              <span className="font-semibold">💡 Hint:</span> {monster.hint}
-            </div>
-          )}
+      {monster.hint && (
+        <div className="bg-yellow-50 p-3 border-l-4 border-yellow-400 mb-4 text-sm">
+          <span className="font-semibold">💡 Hint:</span> {monster.hint}
         </div>
-        
-        {monster.challengeType === 'query' ? (
-          <div className="space-y-3">
-            <Textarea
-              placeholder="Enter your SQL query here..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="min-h-[120px] font-mono text-sm border-2 border-blue-200 focus:border-blue-400"
-            />
-            
-            {error && <div className="text-red-500 text-sm">{error}</div>}
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <RadioGroup 
-              value={selectedOption} 
-              onValueChange={handleOptionSelect}
-              className="space-y-2"
+      )}
+      
+      {monster.challengeType === 'query' ? (
+        <div className="space-y-4 flex-grow flex flex-col">
+          <Textarea
+            placeholder="Enter your SQL query here..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="min-h-[150px] flex-grow font-mono text-sm border-2 border-blue-200 focus:border-blue-400 resize-none"
+          />
+          
+          {error && <div className="text-red-500 text-sm">{error}</div>}
+          
+          <div className="flex justify-end mt-auto pt-2">
+            <Button 
+              onClick={handleQuerySubmit}
+              className="bg-green-600 hover:bg-green-700 px-6"
             >
-              {monster.options?.map((option, index) => (
-                <div 
-                  key={index} 
-                  className={`flex items-start space-x-2 border-2 p-3 rounded-md cursor-pointer ${
-                    selectedOption === option 
-                      ? 'bg-blue-50 border-blue-400' 
-                      : 'hover:bg-gray-50 border-gray-200'
-                  }`}
-                  onClick={() => handleOptionSelect(option)}
-                >
-                  <RadioGroupItem value={option} id={`option-${index}`} className="mt-1" />
-                  <Label 
-                    htmlFor={`option-${index}`} 
-                    className="font-mono text-sm flex-1 cursor-pointer"
-                  >
-                    {option}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-            
-            {error && <div className="text-red-500 text-sm">{error}</div>}
+              Execute Query
+            </Button>
           </div>
-        )}
-        
-        <div className="flex justify-end mt-6">
-          <Button 
-            onClick={monster.challengeType === 'query' ? handleQuerySubmit : handleOptionSubmit}
-            className="bg-green-600 hover:bg-green-700 px-6"
-          >
-            Submit Answer
-          </Button>
         </div>
-      </div>
+      ) : (
+        <div className="space-y-3 flex-grow flex flex-col">
+          <RadioGroup 
+            value={selectedOption} 
+            onValueChange={handleOptionSelect}
+            className="space-y-2 flex-grow"
+          >
+            {monster.options?.map((option, index) => (
+              <div 
+                key={index} 
+                className={`flex items-start space-x-2 border-2 p-3 rounded-md cursor-pointer ${
+                  selectedOption === option 
+                    ? 'bg-blue-50 border-blue-400' 
+                    : 'hover:bg-gray-50 border-gray-200'
+                }`}
+                onClick={() => handleOptionSelect(option)}
+              >
+                <RadioGroupItem value={option} id={`option-${index}`} className="mt-1" />
+                <Label 
+                  htmlFor={`option-${index}`} 
+                  className="font-mono text-sm flex-1 cursor-pointer"
+                >
+                  {option}
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+          
+          {error && <div className="text-red-500 text-sm">{error}</div>}
+          
+          <div className="flex justify-end mt-auto pt-2">
+            <Button 
+              onClick={handleOptionSubmit}
+              className="bg-green-600 hover:bg-green-700 px-6"
+            >
+              Submit Answer
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   )
 } 

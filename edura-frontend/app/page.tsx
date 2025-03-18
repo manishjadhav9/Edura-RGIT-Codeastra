@@ -80,7 +80,7 @@ export default function Home() {
               <h3 className="text-xl font-semibold">Gamification</h3>
             </div>
             <p className="text-muted-foreground">
-              Earn LearnCoins, level up, and unlock achievements as you learn.
+              Earn EDUCOINS, level up, and unlock achievements as you learn.
             </p>
           </Card>
 

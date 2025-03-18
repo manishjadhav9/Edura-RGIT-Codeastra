@@ -9,27 +9,38 @@ interface GameWorldProps {
 }
 
 export default function GameWorld({ level }: GameWorldProps) {
-  // Different backgrounds for different levels using Unsplash images
+  // Different backgrounds for different levels using level images
   const getBackgroundImage = () => {
-    // Different jungle-themed backgrounds for different game phases
-    switch (true) {
-      case level <= 3:
-        // Beginning of the jungle - lighter, more open jungle
-        return worldImages.earlyJungle
-      case level <= 6:
-        // Middle of the jungle - more dense vegetation
-        return worldImages.midJungle
-      case level <= 9:
-        // Deep jungle - darker, more mysterious
-        return worldImages.deepJungle
-      case level <= 12:
-        // Ancient ruins in jungle
-        return worldImages.ancientRuins
-      case level === 13:
-        // Dragon's lair - dramatic setting for final boss
-        return worldImages.dragonLair
+    // Use specific level images for each level
+    switch (level) {
+      case 1:
+        return "/assets/level1.jpg"
+      case 2:
+        return "/assets/level2.jpeg"
+      case 3:
+        return "/assets/level3.jpeg"
+      case 4:
+        return "/assets/level4.jpeg"
+      case 5:
+        return "/assets/level5.jpeg"
+      case 6:
+        return "/assets/level6.jpeg"
+      case 7:
+        return "/assets/level7.jpeg"
+      case 8:
+        return "/assets/level8.jpeg"
+      case 9:
+        return "/assets/level9.jpeg"
+      case 10:
+        return "/assets/level10.jpeg"
+      case 11:
+        return "/assets/level11.jpeg"
+      case 12:
+        return "/assets/level12.jpeg"
+      case 13:
+        return "/assets/level13.jpeg"
       default:
-        return worldImages.earlyJungle
+        return "/assets/level1.jpg"
     }
   }
 
@@ -105,10 +116,14 @@ export default function GameWorld({ level }: GameWorldProps) {
         <div className={`absolute inset-0 ${effects.overlayColor} z-10`}></div> {/* Overlay to darken and maintain consistent look */}
         <Image 
           src={getBackgroundImage()}
-          alt="Jungle Background"
+          alt={`Level ${level} Background`}
           fill
           style={{ objectFit: 'cover', opacity: effects.ambientLight }}
           priority
+          quality={100}
+          sizes="100vw"
+          className="bg-no-repeat bg-center bg-cover"
+          unoptimized
         />
       </div>
       
@@ -127,6 +142,8 @@ export default function GameWorld({ level }: GameWorldProps) {
               objectPosition: 'bottom',
               opacity: 0.7
             }}
+            quality={90}
+            sizes="100vw"
           />
         </div>
       </div>
@@ -136,13 +153,18 @@ export default function GameWorld({ level }: GameWorldProps) {
         className="absolute inset-0 z-2 pointer-events-none transition-transform duration-200 ease-out"
         style={{ transform: `translateX(${parallaxOffset * 2}px)` }}
       >
-        <div className="absolute bottom-0 left-0 right-0 h-20">
+        <div className="absolute bottom-0 left-0 right-0 h-24">
           <div className={`w-full h-full bg-gradient-to-t ${effects.groundColor}/80 to-transparent`}></div>
         </div>
       </div>
       
       {/* Ground/platform */}
-      <div className={`absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t ${effects.groundColor} z-3`} />
+      <div className={`absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t ${effects.groundColor} z-3`} />
+      
+      {/* Level display text */}
+      <div className="absolute bottom-8 left-8 text-white/90 text-sm font-semibold z-10 bg-black/40 px-3 py-1.5 rounded-md shadow-sm">
+        Level {level}: {level <= 3 ? "Jungle Basics" : level <= 6 ? "Jungle Mid Level" : level <= 9 ? "Deep Jungle" : level <= 12 ? "Ancient Ruins" : "Dragon's Lair"}
+      </div>
     </>
   )
 } 

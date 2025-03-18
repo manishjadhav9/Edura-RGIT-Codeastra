@@ -58,19 +58,19 @@ export const monsterImages = {
 // World/environment images for different game sections
 export const worldImages = {
   // Early jungle stages (Levels 1-3)
-  earlyJungle: "https://images.unsplash.com/photo-1587145607315-ef5c5aa95e8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80", // Lighter, more open jungle space
+  earlyJungle: "/assets/level1.jpg", // Level 1 image
   
   // Mid jungle stages (Levels 4-6)
-  midJungle: "https://images.unsplash.com/photo-1596392301391-e8622b210bd4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80", // Denser, more vibrant jungle vegetation
+  midJungle: "/assets/level5.jpeg", // Level 5 image
   
   // Deep jungle stages (Levels 7-9)
-  deepJungle: "https://images.unsplash.com/photo-1510797215324-95aa89f43c33?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80", // Dark, mysterious deep jungle setting
+  deepJungle: "/assets/level8.jpeg", // Level 8 image
   
   // Ancient ruins stages (Levels 10-12)
-  ancientRuins: "https://images.unsplash.com/photo-1526369113272-64808924f92a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80", // Jungle ruins environment
+  ancientRuins: "/assets/level11.jpeg", // Level 11 image
   
   // Final boss stage (Level 13)
-  dragonLair: "https://images.unsplash.com/photo-1604537466158-719b1972feb8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" // Dramatic, imposing final boss environment
+  dragonLair: "/assets/level13.jpeg" // Level 13 image
 };
 
 // Journey map images
