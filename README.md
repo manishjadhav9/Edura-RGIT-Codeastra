@@ -151,3 +151,7 @@ IntelliLearn is a dynamic and user-friendly educational platform that streamline
 
 ## Team
 Volemort
+
+## Extra
+- Code editor (Only frontend)
+  
