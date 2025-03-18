@@ -7,8 +7,9 @@ import Sidebar from "@/components/sidebar"
 import Header from "@/components/header"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { BookOpen, Star, Trophy, Users } from "lucide-react"
+import { BookOpen, Star, Trophy, Users, Code } from "lucide-react"
 
 export default function StoryModePage() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -23,7 +24,7 @@ export default function StoryModePage() {
       id: "1",
       title: "The Digital Frontier",
       description: "Explore the world of web development through an epic journey of discovery and creation.",
-      coverImage: "/placeholder.svg?height=300&width=600",
+      coverImage: "https://images.unsplash.com/photo-1547658719-da2b51169166?q=80&w=800&auto=format&fit=crop",
       difficultyLevel: 2,
       progress: 45,
       chapters: 8,
@@ -35,7 +36,7 @@ export default function StoryModePage() {
       id: "2",
       title: "Design Odyssey",
       description: "Embark on a creative adventure to master UI/UX design principles and techniques.",
-      coverImage: "/placeholder.svg?height=300&width=600",
+      coverImage: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=800&auto=format&fit=crop",
       difficultyLevel: 3,
       progress: 20,
       chapters: 10,
@@ -47,7 +48,7 @@ export default function StoryModePage() {
       id: "3",
       title: "Mobile Legends",
       description: "Journey through the realm of mobile app development and create powerful applications.",
-      coverImage: "/placeholder.svg?height=300&width=600",
+      coverImage: "https://images.unsplash.com/photo-1526498460520-4c246339dccb?q=80&w=800&auto=format&fit=crop",
       difficultyLevel: 4,
       progress: 0,
       chapters: 12,
@@ -59,7 +60,7 @@ export default function StoryModePage() {
       id: "4",
       title: "Data Wizardry",
       description: "Master the arcane arts of data visualization and analysis in this magical adventure.",
-      coverImage: "/placeholder.svg?height=300&width=600",
+      coverImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop",
       difficultyLevel: 3,
       progress: 0,
       chapters: 9,
@@ -94,6 +95,50 @@ export default function StoryModePage() {
               <p className="text-muted-foreground mt-1">Immersive learning adventures</p>
             </div>
 
+            {/* Featured SQL Adventure */}
+            <Card className="overflow-hidden mb-8 border-2 border-blue-400">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
+                <div className="relative h-48 md:h-full md:col-span-1">
+                  <Image
+                    src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=800&auto=format&fit=crop"
+                    alt="SQL Jungle Adventure"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-6 md:col-span-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-2xl font-bold text-blue-800">SQL Jungle Adventure</h2>
+                    <Badge className="bg-blue-600">New</Badge>
+                  </div>
+                  
+                  <p className="text-muted-foreground mb-4">
+                    You're trapped in the SQL Jungle! Master SQL concepts to defeat database monsters and escape. 
+                    Learn everything from table creation to complex joins in this exciting interactive adventure.
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <Badge variant="outline" className="flex items-center gap-1 border-blue-200">
+                      <Code className="h-3 w-3" /> 13 SQL Concepts
+                    </Badge>
+                    <Badge variant="outline" className="flex items-center gap-1 border-blue-200">
+                      <Star className="h-3 w-3" /> Interactive Gameplay
+                    </Badge>
+                    <Badge variant="outline" className="flex items-center gap-1 border-blue-200">
+                      <Trophy className="h-3 w-3" /> 650 XP Reward
+                    </Badge>
+                  </div>
+                  
+                  <Link href="/story-mode/sql-adventure">
+                    <Button className="bg-blue-600 hover:bg-blue-700">
+                      Start Adventure
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </Card>
+
+            <h2 className="text-xl font-semibold mb-4">Continue Your Journey</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {storyWorlds.map((world) => (
                 <Card key={world.id} className="overflow-hidden">
@@ -148,7 +193,7 @@ export default function StoryModePage() {
                   <CardFooter className="p-4 pt-0">
                     <Link href={`/story-mode/${world.id}`} className="w-full">
                       <Button className="w-full bg-orange-500 hover:bg-orange-600">
-                        {world.progress > 0 ? "Continue Adventure" : "Start Adventure"}
+                        {world.progress > 0 ? "Continue" : "Start"} Adventure
                       </Button>
                     </Link>
                   </CardFooter>
