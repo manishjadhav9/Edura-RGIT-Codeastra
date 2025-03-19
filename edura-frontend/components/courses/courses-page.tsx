@@ -38,6 +38,18 @@ interface Course {
   interest_tags: number[]
 }
 
+interface Enrollment {
+  course_id: number
+  course_title: string
+  enrollment_date: string
+  last_accessed_date: string
+  progress_percentage: number
+  is_completed: boolean
+  completion_date: string | null
+  completed_lessons: number
+  completed_quests: number
+}
+
 interface EnrolledCourse extends Course {
   progress_percentage: number
   completed_lessons: number
@@ -45,6 +57,18 @@ interface EnrolledCourse extends Course {
   enrollment_date: string
   is_completed: boolean
   completion_date: string | null
+}
+
+interface UserData {
+  id: number
+  username: string
+  email: string
+  role: string
+  exp: number
+  coins: number
+  institute_company: string
+  qualification: string
+  rank: number | null
 }
 
 export default function CoursesPage() {
@@ -63,32 +87,35 @@ export default function CoursesPage() {
   const fetchUserEnrollments = async () => {
     try {
       setIsLoading(true)
-      const userId = localStorage.getItem('userId')
-      if (!userId) {
+      const userDataString = localStorage.getItem('userData')
+      if (!userDataString) {
         toast({
           title: "Error",
-          description: "User ID not found. Please log in again.",
+          description: "User data not found. Please log in again.",
           variant: "destructive"
         })
         return
       }
 
-      // First, get enrollment data
-      const enrollmentsResponse = await axios.get(`http://127.0.0.1:5000/enrollments/user_enrollments/${userId}`)
+      const userData: UserData = JSON.parse(userDataString)
+      
+      // Get enrollment data using user ID from userData
+      const enrollmentsResponse = await axios.get(`http://127.0.0.1:5000/enrollments/user_enrollments/${userData.id}`)
       
       if (enrollmentsResponse.data.success) {
-        const enrollments = enrollmentsResponse.data.enrollments
+        const enrollments: Enrollment[] = enrollmentsResponse.data.enrollments
 
         // Then, get detailed course information for each enrolled course
         const enrolledCoursesDetails = await Promise.all(
-          enrollments.map(async (enrollment: any) => {
+          enrollments.map(async (enrollment) => {
             const courseResponse = await axios.get(`http://127.0.0.1:5000/courses/course_details/${enrollment.course_id}`)
             if (courseResponse.data.success) {
+              const course: Course = courseResponse.data.course
               return {
-                ...courseResponse.data.course,
+                ...course,
                 progress_percentage: enrollment.progress_percentage,
-                completed_lessons: enrollment.completed_lessons || 0,
-                completed_quests: enrollment.completed_quests || 0,
+                completed_lessons: enrollment.completed_lessons,
+                completed_quests: enrollment.completed_quests,
                 enrollment_date: enrollment.enrollment_date,
                 is_completed: enrollment.is_completed,
                 completion_date: enrollment.completion_date
@@ -119,7 +146,7 @@ export default function CoursesPage() {
       const response = await axios.get("http://127.0.0.1:5000/courses/all_courses")
       if (response.data.success) {
         // Filter out courses that the user is already enrolled in
-        const enrolledIds = new Set(enrolledCourses.map((course: Course) => course.id))
+        const enrolledIds = new Set(enrolledCourses.map(course => course.id))
         const available = response.data.courses.filter((course: Course) => !enrolledIds.has(course.id))
         setAvailableCourses(available)
       }
@@ -142,8 +169,8 @@ export default function CoursesPage() {
     fetchAvailableCourses()
   }, [enrolledCourses])
 
-  const filterCourses = (courses: Course[] | EnrolledCourse[]) => {
-    return courses.filter((course) => {
+  const filterCourses = <T extends Course>(courses: T[]) => {
+    return courses.filter(course => {
       const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           course.description.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesCategory = categoryFilter === "all" || course.interest_tags.includes(parseInt(categoryFilter))
@@ -197,9 +224,9 @@ export default function CoursesPage() {
 
             <Tabs defaultValue="active" className="w-full">
               <TabsList className="mb-6">
-                <TabsTrigger value="active">Active Courses</TabsTrigger>
-                <TabsTrigger value="completed">Completed</TabsTrigger>
-                <TabsTrigger value="available">Available Courses</TabsTrigger>
+                <TabsTrigger value="active">Active Courses ({inProgressCourses.length})</TabsTrigger>
+                <TabsTrigger value="completed">Completed ({completedCourses.length})</TabsTrigger>
+                <TabsTrigger value="available">Available Courses ({availableCourses.length})</TabsTrigger>
               </TabsList>
 
               <TabsContent value="active" className="mt-0">
@@ -221,6 +248,11 @@ export default function CoursesPage() {
                       enrollment_date={course.enrollment_date}
                     />
                   ))}
+                  {filterCourses(inProgressCourses).length === 0 && (
+                    <div className="col-span-full text-center text-muted-foreground py-8">
+                      No active courses found. Start learning by enrolling in a course!
+                    </div>
+                  )}
                 </div>
               </TabsContent>
 
@@ -243,6 +275,11 @@ export default function CoursesPage() {
                       enrollment_date={course.enrollment_date}
                     />
                   ))}
+                  {filterCourses(completedCourses).length === 0 && (
+                    <div className="col-span-full text-center text-muted-foreground py-8">
+                      No completed courses yet. Keep learning!
+                    </div>
+                  )}
                 </div>
               </TabsContent>
 
@@ -265,6 +302,11 @@ export default function CoursesPage() {
                       }}
                     />
                   ))}
+                  {filterCourses(availableCourses).length === 0 && (
+                    <div className="col-span-full text-center text-muted-foreground py-8">
+                      No available courses found. Check back later for new courses!
+                    </div>
+                  )}
                 </div>
               </TabsContent>
             </Tabs>
