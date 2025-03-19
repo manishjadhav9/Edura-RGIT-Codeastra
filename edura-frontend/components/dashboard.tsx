@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Sidebar from "@/components/sidebar"
 import Header from "@/components/header"
 import CourseCard from "@/components/courses/course-card"
@@ -10,10 +10,17 @@ import { Bell, Search, Coins, Award } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useAuth } from "@/contexts/auth-context"
+import EduGuide from "@/components/common/EduGuide"
+import { useEduGuide } from "@/components/common/EduraLayoutProvider"
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const { user } = useAuth()
+  const eduGuide = useEduGuide()
+
+  useEffect(() => {
+    eduGuide.updateState('HAPPY')
+  }, [eduGuide])
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen)

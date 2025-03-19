@@ -11,6 +11,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Award, Coins, BookOpen, Clock, GraduationCap, Trophy, Star, Target, Zap, Shield } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import Image from "next/image"
+import EduGuide, { triggerEduGuideEvent, triggerEduGuideWithContext } from "@/components/common/EduGuide"
+import { useEduGuide } from "@/components/common/EduraLayoutProvider"
 
 // XP Tier system
 const xpTiers = [
@@ -28,10 +30,14 @@ const xpTiers = [
 export default function Profile() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const { user, fetchUserProfile } = useAuth()
+  const eduGuide = useEduGuide()
 
   useEffect(() => {
     fetchUserProfile()
-  }, [fetchUserProfile])
+    
+    // Set EduGuide state for profile page
+    eduGuide.updateState('ADVICE')
+  }, [fetchUserProfile, eduGuide])
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen)
@@ -121,6 +127,25 @@ export default function Profile() {
     { id: 5, type: "Forum Contribution", name: "Helped 3 students", reward: 15, date: "2023-02-25" },
   ]
 
+  // Handle badge click - using context approach
+  const handleBadgeClick = (badge, isEarned, xpNeeded = 0) => {
+    if (isEarned) {
+      triggerEduGuideWithContext(
+        eduGuide,
+        'achievement',
+        `Congratulations! You've earned ${badge.name}!`,
+        'TROPHY'
+      );
+    } else {
+      triggerEduGuideWithContext(
+        eduGuide,
+        'tip',
+        `You need ${xpNeeded} more XP to earn the ${badge.name} badge!`,
+        'ADVICE'
+      );
+    }
+  };
+
   if (!user) {
     return (
       <div className="flex h-screen bg-background">
@@ -150,7 +175,7 @@ export default function Profile() {
               <h1 className="text-2xl md:text-3xl font-bold text-foreground">My Profile</h1>
               <p className="text-muted-foreground mt-1">View and manage your profile information</p>
             </div>
-
+            
             {/* Current XP Tier Display */}
             <div className="mb-6 bg-gradient-to-r from-gray-50 to-gray-100 border p-4 rounded-lg shadow-sm">
               <div className="flex flex-col md:flex-row justify-between items-center">
@@ -244,7 +269,7 @@ export default function Profile() {
                 </CardContent>
               </Card>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               <Card className="md:col-span-1">
                 <CardHeader className="text-center">
@@ -321,11 +346,11 @@ export default function Profile() {
                             +{earnedTierBadges.length - 5} more
                           </div>
                         )}
-                      </div>
+                        </div>
                       <div className="mt-2 text-xs text-blue-600">
                         Earn badges by increasing your XP and completing achievements!
                       </div>
-                    </div>
+                        </div>
 
                     {/* XP Tiers Information */}
                     <div className="mt-4 p-4 rounded-lg border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
@@ -376,7 +401,19 @@ export default function Profile() {
                   <Tabs defaultValue="badges" className="w-full">
                     <TabsList className="mb-4">
                       <TabsTrigger value="badges">Badges</TabsTrigger>
-                      <TabsTrigger value="activity">Activity</TabsTrigger>
+                      <TabsTrigger 
+                        value="activity"
+                        onClick={() => {
+                          triggerEduGuideWithContext(
+                            eduGuide,
+                            'tip',
+                            "Your activity history shows all your rewards and achievements. Keep learning to earn more EDUCOINS!",
+                            'ADVICE'
+                          );
+                        }}
+                      >
+                        Activity
+                      </TabsTrigger>
                       <TabsTrigger value="interests">Interests</TabsTrigger>
                     </TabsList>
                     
@@ -409,7 +446,8 @@ export default function Profile() {
                             return (
                               <div 
                                 key={badge.id} 
-                                className={`border rounded-lg p-4 flex flex-col items-center gap-3 ${badge.color} ${!isBadgeEarned ? 'opacity-40' : ''}`}
+                                className={`border rounded-lg p-4 flex flex-col items-center gap-3 ${badge.color} ${!isBadgeEarned ? 'opacity-40' : ''} cursor-pointer hover:shadow-md transition-shadow`}
+                                onClick={() => handleBadgeClick(badge, isBadgeEarned, xpNeeded)}
                               >
                                 <div className="relative w-16 h-16 mb-2">
                                   <Image 
@@ -448,7 +486,13 @@ export default function Profile() {
                         <h3 className="text-lg font-semibold mb-3">Achievement Badges</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         {userBadges.map((badge) => (
-                            <div key={badge.id} className={`border rounded-lg p-4 flex flex-col items-center gap-3 ${badge.color}`}>
+                            <div 
+                              key={badge.id} 
+                              className={`border rounded-lg p-4 flex flex-col items-center gap-3 ${badge.color} cursor-pointer hover:shadow-md transition-shadow`}
+                              onClick={() => {
+                                handleBadgeClick(badge, true, 0);
+                              }}
+                            >
                               <div className="p-3 rounded-full bg-white/80 shadow-sm">
                               {badge.icon}
                             </div>
