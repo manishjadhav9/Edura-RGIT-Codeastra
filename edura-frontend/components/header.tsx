@@ -45,7 +45,6 @@ export default function Header() {
           onClick={navigateToProfile}
         >
           <Avatar className="h-10 w-10">
-            <AvatarImage src="/placeholder-avatar.png" alt={user?.username || "User"} />
             <AvatarFallback className="bg-orange-500 text-white">{user?.username ? getInitials(user.username) : "U"}</AvatarFallback>
           </Avatar>
         </Button>

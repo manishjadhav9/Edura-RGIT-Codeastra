@@ -230,7 +230,6 @@ export default function Profile() {
               <Card className="md:col-span-1">
                 <CardHeader className="text-center">
                   <Avatar className="h-24 w-24 mx-auto mb-4">
-                    <AvatarImage src="/placeholder-avatar.png" alt={user.username} />
                     <AvatarFallback className="bg-orange-500 text-white text-2xl">
                       {getInitials(user.username)}
                     </AvatarFallback>
