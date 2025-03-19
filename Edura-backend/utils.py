@@ -14,28 +14,40 @@ def token_required(f):
     def decorated_function(*args, **kwargs):
         if request.method == 'OPTIONS':
             return jsonify({}), 200
-        token = request.headers.get('Authorization')
-        if not token:
+            
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
             return jsonify({'message': 'Token is missing'}), 403
+            
+        # Handle Bearer token format
+        token = auth_header.replace('Bearer ', '') if auth_header.startswith('Bearer ') else auth_header
+        
         try:
             data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
             conn = get_db_connection()
-            cursor = conn.cursor()
-            cursor.execute("SELECT id, role, username FROM Users WHERE username = ?", (data['username'],))
-            user_info = cursor.fetchone()
-            if not user_info:
-                return jsonify({'message': 'User not found'}), 404
-            data['id'] = user_info['id']
-            data['role'] = user_info['role']
-            data['username'] = user_info['username']
-            request.token_data = data
-            # Add the decoded token data to the request context
-            request.token_data = data
+            try:
+                cursor = conn.cursor()
+                # Use case-insensitive table name and fetch by email instead of username
+                cursor.execute("SELECT id, role, username FROM users WHERE email = ?", (data['email'],))
+                user_info = cursor.fetchone()
+                
+                if not user_info:
+                    return jsonify({'message': 'User not found'}), 404
+                    
+                # Update token data with user info
+                data['user_id'] = user_info['id']
+                data['role'] = user_info['role']
+                data['username'] = user_info['username']
+                request.token_data = data
+                
+                return f(*args, **kwargs)
+            finally:
+                conn.close()
+                
         except jwt.ExpiredSignatureError:
             return jsonify({'message': 'Token has expired'}), 403
         except jwt.InvalidTokenError:
-            print(token)
             return jsonify({'message': 'Token is invalid'}), 403
-        return f(*args, **kwargs)
+            
     return decorated_function
 

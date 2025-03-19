@@ -1,12 +1,11 @@
 from flask import Blueprint, Flask, jsonify, make_response
 from .users import user_management
 from .areas_of_interest import areas_of_interest
-# from .scores import scores_management
-# from .quizes import quiz_management
-# from .chapters import chapter_management
-# from .subjects import subject_management
-# from .questions import question_management
-# from .attempts_manager import attempts_management
+from .courses import courses
+from .enrollments import enrollments
+from .lessons import lessons
+from .questions import questions
+from .quests import quests
 
 from flask_cors import CORS
 from itsdangerous import URLSafeTimedSerializer
@@ -37,13 +36,12 @@ def create_app():
     # Register the blueprints
     app.register_blueprint(user_management, url_prefix='/users')
     app.register_blueprint(areas_of_interest, url_prefix='/areas_of_interest')
-    # app.register_blueprint(quiz_management, url_prefix='/quiz')
-    # app.register_blueprint(scores_management, url_prefix='/scores')
-    # app.register_blueprint(chapter_management, url_prefix='/chapters')
-    # app.register_blueprint(subject_management, url_prefix='/subjects')
-    # app.register_blueprint(question_management, url_prefix='/questions')
-    # app.register_blueprint(attempts_management, url_prefix='/attempts')
-
+    app.register_blueprint(courses, url_prefix='/courses')
+    app.register_blueprint(enrollments, url_prefix='/enrollments')
+    app.register_blueprint(lessons, url_prefix='/lessons')
+    app.register_blueprint(questions, url_prefix='/questions')
+    app.register_blueprint(quests, url_prefix='/quests')
+    
 
 
     return app

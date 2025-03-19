@@ -396,3 +396,63 @@ def update_profile():
         return jsonify({"success": False, "message": f"Update failed: {str(e)}"}), 500
     finally:
         conn.close()
+
+@user_management.route('/get_all_students', methods=['GET'])
+@token_required
+def get_all_students():
+    """
+    Get the list of all students and their data. Only admin users can access this endpoint.
+    
+    Headers Required:
+    - Authorization: Bearer <jwt_token>
+    
+    Success Response (200):
+    {
+        "success": true,
+        "students": [
+            {
+                "id": 1,
+                "username": "johndoe",
+                "email": "student@example.com",
+                "qualification": "undergraduate",
+                "institute_company": "RGIT",
+                "exp": 100,
+                "coins": 50,
+                "rank": 5,
+                "created_at": "2024-03-20T10:00:00"
+            },
+            ...
+        ]
+    }
+    
+    Error Responses:
+    - 403: Unauthorized access (non-admin users)
+    - 500: Failed to fetch students with error message
+    """
+    token_data = request.token_data
+    
+    # Check if user is admin
+    if token_data['role'] != 'admin':
+        return jsonify({"success": False, "message": "Only admin users can access this endpoint"}), 403
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Get all students
+        cursor.execute('''
+            SELECT id, username, email, qualification, institute_company, exp, coins, rank, created_at
+            FROM users 
+            WHERE role = 'student'
+        ''')
+        students = cursor.fetchall()
+
+        return jsonify({
+            "success": True,
+            "students": [dict(student) for student in students]
+        }), 200
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Failed to fetch students: {str(e)}"}), 500
+    finally:
+        conn.close()
