@@ -13,8 +13,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/contexts/auth-context"
+import { Menu, Bell, LogOut } from "lucide-react"
 
-export default function Header() {
+interface HeaderProps {
+  toggleSidebar: () => void
+}
+
+export default function Header({ toggleSidebar }: HeaderProps) {
+  const [notificationsOpen, setNotificationsOpen] = useState(false)
   const router = useRouter()
   const { user, logout } = useAuth()
 
@@ -33,6 +39,15 @@ export default function Header() {
       .map(part => part.charAt(0).toUpperCase())
       .join('')
       .substring(0, 2)
+  }
+
+  const handleSignOut = () => {
+    // Clear auth token and user data from localStorage
+    localStorage.removeItem("authToken")
+    localStorage.removeItem("userData")
+    
+    // Redirect to onboarding page
+    router.push("/onboarding")
   }
 
   return (
@@ -72,6 +87,23 @@ export default function Header() {
             <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+      </div>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setNotificationsOpen(!notificationsOpen)}
+        >
+          <Bell className="h-5 w-5" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleSignOut}
+          className="text-red-500 hover:text-red-600 hover:bg-red-50"
+        >
+          <LogOut className="h-5 w-5" />
+        </Button>
       </div>
     </header>
   )

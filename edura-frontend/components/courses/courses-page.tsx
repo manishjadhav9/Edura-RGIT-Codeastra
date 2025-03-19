@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Sidebar from "@/components/sidebar"
 import Header from "@/components/header"
 import CourseCard from "@/components/courses/course-card"
@@ -73,12 +73,6 @@ interface UserData {
 
 export default function CoursesPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("all")
-  const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([])
-  const [availableCourses, setAvailableCourses] = useState<Course[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const { toast } = useToast()
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen)
@@ -186,7 +180,7 @@ export default function CoursesPage() {
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
+        <Header toggleSidebar={toggleSidebar} />
 
         <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-muted/30">
           <div className="max-w-7xl mx-auto">
@@ -199,24 +193,17 @@ export default function CoursesPage() {
               <div className="mt-4 md:mt-0 flex w-full md:w-auto gap-2">
                 <div className="relative w-full md:w-64">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    type="search" 
-                    placeholder="Search courses..." 
-                    className="pl-8 bg-background border-muted"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
+                  <Input type="search" placeholder="Search courses..." className="pl-8 bg-background border-muted" />
                 </div>
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <Select defaultValue="all">
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Filter by" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Categories</SelectItem>
-                    <SelectItem value="1">AIML</SelectItem>
-                    <SelectItem value="2">Web Development</SelectItem>
-                    <SelectItem value="3">Mobile Development</SelectItem>
-                    <SelectItem value="4">Cloud Computing</SelectItem>
+                    <SelectItem value="design">Design</SelectItem>
+                    <SelectItem value="development">Development</SelectItem>
+                    <SelectItem value="marketing">Marketing</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -231,21 +218,14 @@ export default function CoursesPage() {
 
               <TabsContent value="active" className="mt-0">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filterCourses(inProgressCourses).map((course) => (
+                  {activeCourses.map((course) => (
                     <CourseCard
                       key={course.id}
                       id={course.id}
                       title={course.title}
                       description={course.description}
-                      progress_percentage={course.progress_percentage}
-                      thumbnail_url={course.thumbnail_url}
-                      lesson_count={course.lesson_count}
-                      duration_hours={course.duration_hours}
-                      total_exp={course.total_exp}
-                      total_coins={course.total_coins}
-                      completed_lessons={course.completed_lessons}
-                      is_completed={course.is_completed}
-                      enrollment_date={course.enrollment_date}
+                      progress={course.progress}
+                      image={course.image}
                     />
                   ))}
                   {filterCourses(inProgressCourses).length === 0 && (
@@ -258,21 +238,14 @@ export default function CoursesPage() {
 
               <TabsContent value="completed" className="mt-0">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filterCourses(completedCourses).map((course) => (
+                  {completedCourses.map((course) => (
                     <CourseCard
                       key={course.id}
                       id={course.id}
                       title={course.title}
                       description={course.description}
-                      progress_percentage={course.progress_percentage}
-                      thumbnail_url={course.thumbnail_url}
-                      lesson_count={course.lesson_count}
-                      duration_hours={course.duration_hours}
-                      total_exp={course.total_exp}
-                      total_coins={course.total_coins}
-                      completed_lessons={course.completed_lessons}
-                      is_completed={course.is_completed}
-                      enrollment_date={course.enrollment_date}
+                      progress={course.progress}
+                      image={course.image}
                     />
                   ))}
                   {filterCourses(completedCourses).length === 0 && (
@@ -285,21 +258,14 @@ export default function CoursesPage() {
 
               <TabsContent value="available" className="mt-0">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filterCourses(availableCourses).map((course) => (
+                  {availableCourses.map((course) => (
                     <CourseCard
                       key={course.id}
                       id={course.id}
                       title={course.title}
                       description={course.description}
-                      thumbnail_url={course.thumbnail_url}
-                      lesson_count={course.lesson_count}
-                      duration_hours={course.duration_hours}
-                      total_exp={course.total_exp}
-                      total_coins={course.total_coins}
-                      onEnrollmentSuccess={() => {
-                        // Refresh both enrolled and available courses
-                        fetchUserEnrollments()
-                      }}
+                      progress={course.progress}
+                      image={course.image}
                     />
                   ))}
                   {filterCourses(availableCourses).length === 0 && (

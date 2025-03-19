@@ -83,6 +83,35 @@ export default function Profile() {
     { id: 6, name: "Top Performer", description: "Ranked in the top 10% of all students", icon: <Star className="h-5 w-5" />, color: "bg-orange-100 text-orange-700" },
   ]
 
+  // XP tier badges - based on the XP tier system
+  const tierBadges = [
+    { id: 101, name: "Knowledge Seeker", description: "Reached 0-100 XP (Bronze Tier)", image: "/badges/knowledgeseeker.png", tier: "Bronze", color: "bg-amber-50 border-amber-200" },
+    { id: 102, name: "Curious Explorer", description: "Reached 101-250 XP (Bronze Tier)", image: "/badges/curiousexplorer.png", tier: "Bronze", color: "bg-amber-50 border-amber-200" },
+    { id: 103, name: "Dedicated Learner", description: "Reached 251-500 XP (Bronze Tier)", image: "/badges/Dedicatedlearner.png", tier: "Bronze", color: "bg-amber-50 border-amber-200" },
+    { id: 104, name: "Wisdom Apprentice", description: "Reached 501-1000 XP (Silver Tier)", image: "/badges/wisdomApprentice.png", tier: "Silver", color: "bg-gray-50 border-gray-200" },
+    { id: 105, name: "Knowledge Master", description: "Reached 1001-2000 XP (Silver Tier)", image: "/badges/knowledgemaster.png", tier: "Silver", color: "bg-gray-50 border-gray-200" },
+    { id: 106, name: "Learning Champion", description: "Reached 2001-3500 XP (Silver Tier)", image: "/badges/learningchampion.png", tier: "Silver", color: "bg-gray-50 border-gray-200" },
+    { id: 107, name: "Elite Scholar", description: "Reached 3501-5000 XP (Gold Tier)", image: "/badges/elitescholar.png", tier: "Gold", color: "bg-yellow-50 border-yellow-200" },
+    { id: 108, name: "Grand Educator", description: "Reached 5001-7500 XP (Gold Tier)", image: "/badges/grandeducator.png", tier: "Gold", color: "bg-yellow-50 border-yellow-200" },
+    { id: 109, name: "Learning Legend", description: "Reached 7501+ XP (Gold Tier)", image: "/badges/learninglegend.png", tier: "Gold", color: "bg-yellow-50 border-yellow-200" },
+  ]
+
+  // Get user's tier information
+  const userExp = user.exp || 750; // Default to 750 XP if exp is not available
+  const userCoins = user.coins || 1250; // Default to 1250 EDUCOINS if coins is not available
+  const userTier = getUserTier(userExp)
+  const tierProgress = calculateTierProgress(userExp, userTier)
+  
+  // Determine next tier (if any)
+  const nextTierIndex = xpTiers.indexOf(userTier) + 1
+  const nextTier = nextTierIndex < xpTiers.length ? xpTiers[nextTierIndex] : null
+
+  // Calculate earned tier badges
+  const earnedTierBadges = tierBadges.filter(badge => {
+    const tierInfo = xpTiers.find(tier => tier.name === badge.name);
+    return tierInfo && userExp >= tierInfo.range[0];
+  });
+
   // Activity history data
   const activityHistory = [
     { id: 1, type: "Course Completion", name: "Introduction to SQL", reward: 50, date: "2023-03-15" },
@@ -107,16 +136,6 @@ export default function Profile() {
       </div>
     )
   }
-
-  // Get user's tier information
-  const userExp = user.exp || 750; // Default to 750 XP if exp is not available
-  const userCoins = user.coins || 1250; // Default to 1250 EDUCOINS if coins is not available
-  const userTier = getUserTier(userExp)
-  const tierProgress = calculateTierProgress(userExp, userTier)
-  
-  // Determine next tier (if any)
-  const nextTierIndex = xpTiers.indexOf(userTier) + 1
-  const nextTier = nextTierIndex < xpTiers.length ? xpTiers[nextTierIndex] : null
 
   return (
     <div className="flex h-screen bg-background">
@@ -219,7 +238,7 @@ export default function Profile() {
                 <CardContent className="p-4 flex justify-between items-center">
                   <div>
                     <p className="text-sm font-semibold text-green-800">BADGES</p>
-                    <p className="text-2xl font-bold text-green-900">{userBadges.length}</p>
+                    <p className="text-2xl font-bold text-green-900">{userBadges.length + earnedTierBadges.length}</p>
                   </div>
                   <Award className="h-10 w-10 text-green-500" />
                 </CardContent>
@@ -278,6 +297,36 @@ export default function Profile() {
                       </div>
                     </div>
 
+                    {/* Badge info display */}
+                    <div className="mt-4 bg-blue-50 rounded-lg p-4 border border-blue-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-bold text-blue-900">Badges Collection</h3>
+                        <div className="p-1 bg-white rounded-full shadow-sm">
+                          <Award className="h-4 w-4 text-blue-500" />
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {[...Array(Math.min(5, earnedTierBadges.length))].map((_, i) => (
+                          <div key={i} className="relative w-6 h-6">
+                            <Image 
+                              src={earnedTierBadges[i]?.image || "/badges/knowledgeseeker.png"}
+                              alt="Badge"
+                              fill
+                              className="object-contain"
+                            />
+                          </div>
+                        ))}
+                        {earnedTierBadges.length > 5 && (
+                          <div className="text-xs font-medium text-blue-700 flex items-center">
+                            +{earnedTierBadges.length - 5} more
+                          </div>
+                        )}
+                      </div>
+                      <div className="mt-2 text-xs text-blue-600">
+                        Earn badges by increasing your XP and completing achievements!
+                      </div>
+                    </div>
+
                     {/* XP Tiers Information */}
                     <div className="mt-4 p-4 rounded-lg border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
                       <h3 className="font-bold text-gray-800 mb-2">XP Tier System</h3>
@@ -332,18 +381,84 @@ export default function Profile() {
                     </TabsList>
                     
                     <TabsContent value="badges">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="mb-4 bg-gradient-to-r from-amber-50 to-amber-100 p-4 rounded-lg border border-amber-200">
+                        <h3 className="font-semibold text-amber-900 mb-2">About Badges</h3>
+                        <p className="text-sm text-amber-800 mb-2">
+                          Badges are a key part of your learning journey on Edura. There are two types of badges you can earn:
+                        </p>
+                        <ul className="text-sm text-amber-800 space-y-1 list-disc pl-5">
+                          <li><span className="font-medium">XP Tier Badges</span> - Automatically awarded as you reach new experience point thresholds, with Bronze, Silver and Gold tiers.</li>
+                          <li><span className="font-medium">Achievement Badges</span> - Earned by completing specific tasks, like finishing courses, maintaining login streaks, or performing well in quizzes.</li>
+                        </ul>
+                        <p className="text-sm text-amber-800 mt-2">
+                          Collect all badges to showcase your progress and accomplishments!
+                        </p>
+                      </div>
+
+                      <div className="mb-6">
+                        <h3 className="text-lg font-semibold mb-3">XP Tier Badges</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                          {tierBadges.map((badge) => {
+                            // Find the corresponding tier info
+                            const tierInfo = xpTiers.find(tier => tier.name === badge.name);
+                            // Check if the user has earned this badge
+                            const isBadgeEarned = tierInfo && userExp >= tierInfo.range[0];
+                            // Calculate XP needed if not earned
+                            const xpNeeded = tierInfo ? Math.max(0, tierInfo.range[0] - userExp) : 0;
+                            
+                            return (
+                              <div 
+                                key={badge.id} 
+                                className={`border rounded-lg p-4 flex flex-col items-center gap-3 ${badge.color} ${!isBadgeEarned ? 'opacity-40' : ''}`}
+                              >
+                                <div className="relative w-16 h-16 mb-2">
+                                  <Image 
+                                    src={badge.image}
+                                    alt={badge.name}
+                                    fill
+                                    className="object-contain"
+                                  />
+                                </div>
+                                <div className="text-center">
+                                  <h4 className="font-semibold">{badge.name}</h4>
+                                  <p className="text-xs text-muted-foreground">{badge.description}</p>
+                                  <Badge 
+                                    variant="outline" 
+                                    className={`mt-2 ${
+                                      badge.tier === 'Bronze' ? 'border-amber-500 text-amber-600 bg-amber-50' : 
+                                      badge.tier === 'Silver' ? 'border-gray-400 text-gray-600 bg-gray-50' : 
+                                      'border-yellow-500 text-yellow-600 bg-yellow-50'
+                                    }`}
+                                  >
+                                    {badge.tier} Tier
+                                  </Badge>
+                                  {!isBadgeEarned && tierInfo && (
+                                    <div className="mt-2 text-xs font-medium text-blue-600">
+                                      {xpNeeded} XP needed
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3">Achievement Badges</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         {userBadges.map((badge) => (
-                          <div key={badge.id} className={`border rounded-lg p-4 flex items-start gap-3 ${badge.color}`}>
-                            <div className="p-2 rounded-full">
+                            <div key={badge.id} className={`border rounded-lg p-4 flex flex-col items-center gap-3 ${badge.color}`}>
+                              <div className="p-3 rounded-full bg-white/80 shadow-sm">
                               {badge.icon}
                             </div>
-                            <div>
+                              <div className="text-center">
                               <h4 className="font-semibold">{badge.name}</h4>
-                              <p className="text-sm text-muted-foreground">{badge.description}</p>
+                                <p className="text-xs text-muted-foreground">{badge.description}</p>
                             </div>
                           </div>
                         ))}
+                        </div>
                       </div>
                     </TabsContent>
                     
@@ -430,21 +545,6 @@ export default function Profile() {
                           </TableRow>
                         </TableBody>
                       </Table>
-                    </TabsContent>
-                    <TabsContent value="badges">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {userBadges.map((badge) => (
-                          <div key={badge.id} className="border rounded-lg p-4 flex items-start gap-3">
-                            <div className="bg-purple-100 p-2 rounded-full text-purple-600">
-                              {badge.icon}
-                            </div>
-                            <div>
-                              <h4 className="font-semibold">{badge.name}</h4>
-                              <p className="text-sm text-muted-foreground">{badge.description}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
                     </TabsContent>
                   </Tabs>
                 </CardContent>
