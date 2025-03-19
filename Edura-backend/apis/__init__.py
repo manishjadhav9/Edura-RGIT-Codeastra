@@ -6,6 +6,7 @@ from .enrollments import enrollments
 from .lessons import lessons
 from .questions import questions
 from .quests import quests
+from .notes import notes
 
 from flask_cors import CORS
 from itsdangerous import URLSafeTimedSerializer
@@ -41,6 +42,7 @@ def create_app():
     app.register_blueprint(lessons, url_prefix='/lessons')
     app.register_blueprint(questions, url_prefix='/questions')
     app.register_blueprint(quests, url_prefix='/quests')
+    app.register_blueprint(notes, url_prefix='/notes')
     
 
 
