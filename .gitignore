@@ -26,3 +26,8 @@ Edura-backend/__pycache__/utils.cpython-313.pyc
 Edura-backend/apis/__pycache__/__init__.cpython-313.pyc
 Edura-backend/apis/__pycache__/areas_of_interest.cpython-313.pyc
 Edura-backend/apis/__pycache__/users.cpython-313.pyc
+Edura-backend/apis/__pycache__/courses.cpython-313.pyc
+Edura-backend/apis/__pycache__/enrollments.cpython-313.pyc
+Edura-backend/apis/__pycache__/lessons.cpython-313.pyc
+Edura-backend/apis/__pycache__/questions.cpython-313.pyc
+Edura-backend/apis/__pycache__/quests.cpython-313.pyc
