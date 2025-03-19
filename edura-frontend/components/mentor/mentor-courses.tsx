@@ -27,6 +27,21 @@ axios.interceptors.request.use((config) => {
   return config
 })
 
+// Function to convert YouTube URL to embed URL
+const convertToEmbedUrl = (url: string) => {
+  if (!url) return ''
+  
+  // Handle different YouTube URL formats
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
+  const match = url.match(regExp)
+
+  if (match && match[2].length === 11) {
+    return `https://www.youtube.com/embed/${match[2]}`
+  }
+
+  return url
+}
+
 interface Course {
   id: number
   title: string
@@ -65,6 +80,8 @@ export default function MentorCoursesPage() {
   const [isCreateCourseOpen, setIsCreateCourseOpen] = useState(false)
   const [isCreateLessonOpen, setIsCreateLessonOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null)
+  const [isViewLessonOpen, setIsViewLessonOpen] = useState(false)
   const { toast } = useToast()
 
   const [newCourse, setNewCourse] = useState({
@@ -120,10 +137,10 @@ export default function MentorCoursesPage() {
   const fetchLessons = async (courseId: number) => {
     try {
       setIsLoading(true)
-      const token = localStorage.getItem('token')
-      const response = await axios.get(`http://127.0.0.1:5000/courses/course_lessons/${courseId}`, {
+      const token = localStorage.getItem('authToken')
+      const response = await axios.get(`http://127.0.0.1:5000/lessons/course_lessons/${courseId}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `${token}`
         }
       })
       if (response.data.success) {
@@ -171,10 +188,15 @@ export default function MentorCoursesPage() {
   const handleCreateLesson = async () => {
     try {
       setIsLoading(true)
-      const token = localStorage.getItem('token')
-      const response = await axios.post("http://127.0.0.1:5000/courses/create_lesson", newLesson, {
+      const token = localStorage.getItem('authToken')
+      // Convert YouTube URL to embed URL before sending
+      const lessonData = {
+        ...newLesson,
+        video_url: convertToEmbedUrl(newLesson.video_url)
+      }
+      const response = await axios.post("http://127.0.0.1:5000/lessons/create_lesson", lessonData, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `${token}`
         }
       })
       if (response.data.success) {
@@ -293,7 +315,7 @@ export default function MentorCoursesPage() {
                     
                     <div className="flex gap-2">
                       <Button 
-                        className="w-full" 
+                        className="flex-1" 
                         variant="outline"
                         onClick={() => setSelectedCourse(course)}
                       >
@@ -301,11 +323,12 @@ export default function MentorCoursesPage() {
                         View
                       </Button>
                       <Button 
-                        className="w-full bg-orange-500 hover:bg-orange-600"
-                        onClick={() => {
+                        className="flex-1 bg-orange-500 hover:bg-orange-600"
+                        onClick={(e) => {
+                          e.stopPropagation() // Prevent triggering the view dialog
                           setSelectedCourse(course)
-                          setIsCreateLessonOpen(true)
                           setNewLesson(prev => ({ ...prev, course_id: course.id }))
+                          setIsCreateLessonOpen(true)
                         }}
                       >
                         <Plus className="h-4 w-4 mr-2" />
@@ -405,8 +428,70 @@ export default function MentorCoursesPage() {
         </DialogContent>
       </Dialog>
 
+      {/* View Course Lessons Dialog */}
+      <Dialog open={!!selectedCourse && !isCreateLessonOpen && !isViewLessonOpen} onOpenChange={(open) => {
+        if (!open) {
+          setSelectedCourse(null)
+        }
+      }}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{selectedCourse?.title} - Lessons</DialogTitle>
+            <DialogDescription>
+              View and manage lessons for this course
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            {lessons.map((lesson) => (
+              <Card key={lesson.id} className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => {
+                setSelectedLesson(lesson)
+                setIsViewLessonOpen(true)
+              }}>
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-semibold">{lesson.title}</h4>
+                      <p className="text-sm text-muted-foreground mt-1">Order: {lesson.order_number}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Badge variant="outline">{lesson.exp_reward} XP</Badge>
+                      <Badge variant="outline">{lesson.coins_reward} Coins</Badge>
+                    </div>
+                  </div>
+                  {lesson.video_url && (
+                    <div className="mt-2 text-sm text-muted-foreground">
+                      <span className="font-medium">Video:</span> {lesson.video_url}
+                    </div>
+                  )}
+                  {lesson.pdf_notes_url && (
+                    <div className="mt-1 text-sm text-muted-foreground">
+                      <span className="font-medium">PDF Notes:</span> {lesson.pdf_notes_url}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSelectedCourse(null)}>Close</Button>
+            <Button 
+              onClick={() => {
+                setIsCreateLessonOpen(true)
+              }}
+            >
+              Add Lesson
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Create Lesson Dialog */}
-      <Dialog open={isCreateLessonOpen} onOpenChange={setIsCreateLessonOpen}>
+      <Dialog open={isCreateLessonOpen} onOpenChange={(open) => {
+        if (!open) {
+          setIsCreateLessonOpen(false)
+          // Don't reset selectedCourse when closing create lesson dialog
+        }
+      }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Lesson</DialogTitle>
@@ -440,11 +525,12 @@ export default function MentorCoursesPage() {
               />
             </div>
             <div>
-              <Label htmlFor="videoUrl">Video URL</Label>
+              <Label htmlFor="videoUrl">Video URL (YouTube)</Label>
               <Input
                 id="videoUrl"
                 value={newLesson.video_url}
                 onChange={(e) => setNewLesson(prev => ({ ...prev, video_url: e.target.value }))}
+                placeholder="Paste YouTube video URL here"
               />
             </div>
             <div>
@@ -482,53 +568,56 @@ export default function MentorCoursesPage() {
         </DialogContent>
       </Dialog>
 
-      {/* View Course Lessons Dialog */}
-      <Dialog open={!!selectedCourse && !isCreateLessonOpen} onOpenChange={() => setSelectedCourse(null)}>
-        <DialogContent className="max-w-4xl">
+      {/* View Lesson Content Dialog */}
+      <Dialog open={isViewLessonOpen} onOpenChange={(open) => {
+        if (!open) {
+          setIsViewLessonOpen(false)
+          setSelectedLesson(null)
+          // Don't reset selectedCourse when closing view lesson dialog
+        }
+      }}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{selectedCourse?.title} - Lessons</DialogTitle>
+            <DialogTitle>{selectedLesson?.title}</DialogTitle>
             <DialogDescription>
-              View and manage lessons for this course
+              Lesson Content
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            {lessons.map((lesson) => (
-              <Card key={lesson.id}>
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-semibold">{lesson.title}</h4>
-                      <p className="text-sm text-muted-foreground mt-1">Order: {lesson.order_number}</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Badge variant="outline">{lesson.exp_reward} XP</Badge>
-                      <Badge variant="outline">{lesson.coins_reward} Coins</Badge>
-                    </div>
-                  </div>
-                  {lesson.video_url && (
-                    <div className="mt-2 text-sm text-muted-foreground">
-                      <span className="font-medium">Video:</span> {lesson.video_url}
-                    </div>
-                  )}
-                  {lesson.pdf_notes_url && (
-                    <div className="mt-1 text-sm text-muted-foreground">
-                      <span className="font-medium">PDF Notes:</span> {lesson.pdf_notes_url}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+            <div className="prose prose-sm dark:prose-invert max-w-none">
+              <div dangerouslySetInnerHTML={{ __html: selectedLesson?.content_html || '' }} />
+            </div>
+            {selectedLesson?.video_url && (
+              <div>
+                <h4 className="text-sm font-medium mb-2">Video</h4>
+                <div className="aspect-video">
+                  <iframe 
+                    src={convertToEmbedUrl(selectedLesson.video_url)}
+                    className="w-full h-full" 
+                    allowFullScreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  />
+                </div>
+              </div>
+            )}
+            {selectedLesson?.pdf_notes_url && (
+              <div>
+                <h4 className="text-sm font-medium mb-2">PDF Notes</h4>
+                <object
+                  data={selectedLesson.pdf_notes_url}
+                  type="application/pdf"
+                  className="w-full h-[500px]"
+                >
+                  <p>Unable to display PDF. <a href={selectedLesson.pdf_notes_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Download PDF</a></p>
+                </object>
+              </div>
+            )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSelectedCourse(null)}>Close</Button>
-            <Button 
-              onClick={() => {
-                setIsCreateLessonOpen(true)
-                setNewLesson(prev => ({ ...prev, course_id: selectedCourse!.id }))
-              }}
-            >
-              Add Lesson
-            </Button>
+            <Button variant="outline" onClick={() => {
+              setIsViewLessonOpen(false)
+              setSelectedLesson(null)
+            }}>Close</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
